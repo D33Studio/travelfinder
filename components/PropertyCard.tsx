@@ -36,7 +36,7 @@ export default function PropertyCard({ property }: { property: Property }) {
         >
           <svg
             viewBox="0 0 24 24"
-            style={{ width: 13, height: 13, stroke: "rgba(255,255,255,0.9)", fill: saved ? "#ffffff" : "none", strokeWidth: 1.75, strokeLinecap: "round" } as React.CSSProperties}
+            style={{ width: 18, height: 18, stroke: "#4a4a4a", fill: saved ? "#4a4a4a" : "none", strokeWidth: 1.75, strokeLinecap: "round" } as React.CSSProperties}
           >
             <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
