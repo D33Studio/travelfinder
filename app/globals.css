@@ -22,9 +22,12 @@ body {
   color: var(--text);
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: #111; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
@@ -45,7 +48,9 @@ body {
 .profile-dots:hover { background: rgba(255,255,255,0.07); color: var(--text); }
 
 /* MAIN */
-.main { margin-left: var(--sidebar-w); flex: 1; background: #111111; min-height: 100vh; overflow-y: auto; }
+/* min-width:0 lets this flex child shrink instead of being widened by the card row,
+   so the card row's overflow never becomes page-level horizontal scroll. */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; max-width: calc(100% - var(--sidebar-w)); background: #111111; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
 
 /* HERO */
 .hero { padding: 65px 0 36px 65px; }
@@ -57,11 +62,14 @@ body {
 .search-input:focus { border-color: rgba(255,255,255,0.35); }
 
 /* CONTENT */
-.content { padding: 0 40px 60px 65px; }
-.section-label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #eeeeee; margin-bottom: 16px; }
+/* No horizontal padding here — the row scroller carries its own so cards can
+   run past the right screen edge while the label stays aligned and stationary. */
+.content { padding: 0 0 60px; }
+.section-label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #eeeeee; margin-bottom: 16px; padding: 0 40px 0 65px; }
 
-/* GRID */
-.cards-grid { display: grid; grid-template-columns: repeat(4, 275px); gap: 18px; }
+/* CARD ROW — the only horizontally scrollable element on the page */
+.cards-grid { display: flex; gap: 18px; overflow-x: auto; overflow-y: hidden; padding: 6px 40px 6px 65px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.cards-grid > * { scroll-snap-align: start; }
 
 /* CARD */
 .card { width: 275px; height: 430px; border-radius: 31px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: transform 0.22s, border-color 0.22s; display: flex; flex-direction: column; flex-shrink: 0; position: relative; }
