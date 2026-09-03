@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Property, PillColor } from "@/lib/properties";
 
 const pillClass: Record<PillColor, string> = {
@@ -17,7 +18,7 @@ export default function PropertyCard({ property }: { property: Property }) {
   const [saved, setSaved] = useState(false);
 
   return (
-    <div className="card">
+    <Link href={`/property/${property.id}`} className="card" aria-label={`${property.name}, ${property.location}`}>
       <div className="card-thumb">
         <Image
           src={property.image}
@@ -29,10 +30,24 @@ export default function PropertyCard({ property }: { property: Property }) {
         />
         <div className="card-overlay" />
         <div className="card-badge">{property.location}</div>
-        <button
+        <span
+          role="button"
+          tabIndex={0}
           className={`card-save${saved ? " saved" : ""}`}
-          onClick={() => setSaved(!saved)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setSaved(!saved);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.stopPropagation();
+              setSaved(!saved);
+            }
+          }}
           aria-label="Save property"
+          aria-pressed={saved}
         >
           <svg
             viewBox="0 0 24 24"
@@ -40,7 +55,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           >
             <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
-        </button>
+        </span>
       </div>
 
       <div className="card-body">
@@ -73,9 +88,9 @@ export default function PropertyCard({ property }: { property: Property }) {
           ))}
         </div>
         <div className="reserve-wrap">
-          <button className="reserve-btn">Reserve →</button>
+          <span className="reserve-btn">Reserve →</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
