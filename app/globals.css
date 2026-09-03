@@ -71,28 +71,24 @@ body {
 .section-subtitle { font-size: 12.5px; color: var(--text-muted); padding: 0 40px 0 65px; margin-bottom: 16px; }
 
 /* CARD ROW — the only horizontally scrollable element on the page */
-.cards-grid { display: flex; gap: 35px; overflow-x: auto; overflow-y: hidden; padding: 6px 40px 6px 65px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.cards-grid { display: flex; gap: 18px; overflow-x: auto; overflow-y: hidden; padding: 6px 40px 6px 65px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 
 /* CARD */
-/* will-change pre-promotes the card (and its blurred badge) to their own GPU
-   layers before the hover transition starts — without this, Chrome/Safari
-   re-promote those layers mid-transition and the backdrop-filter blur briefly
-   drops out, reading as a flash of full brightness that then dims back down. */
-.card { width: 275px; height: 430px; border-radius: 31px; overflow: hidden; background: var(--surface); cursor: pointer; transition: transform 0.22s; display: flex; flex-direction: column; flex-shrink: 0; position: relative; will-change: transform; box-shadow: inset 0 -40px 46px -30px rgba(210,210,210,0.14); }
-.card:hover { transform: translateY(-4px); }
-.card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(to bottom, #060606 0%, #3a3a3a 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 4; }
+.card { width: 275px; height: 430px; border-radius: 31px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: transform 0.22s, border-color 0.22s; display: flex; flex-direction: column; flex-shrink: 0; position: relative; }
+.card:hover { transform: translateY(-4px); border-color: var(--border2); }
 
 /* CARD THUMB */
 .card-thumb { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
-.card-img { transition: transform 0.4s; will-change: transform; }
+.card-img { transition: transform 0.4s; }
 .card:hover .card-img { transform: scale(1.05); }
 .card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.85) 75%, #000000 100%); pointer-events: none; z-index: 1; }
 
 /* LIQUID GLASS badge */
-.card-badge { position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 11px; border-radius: 100px; background: rgba(0,0,0,0.45); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.2); font-size: 10.5px; letter-spacing: 0.04em; color: rgba(255,255,255,0.95); font-weight: 500; will-change: transform; }
+.card-badge { position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 11px; border-radius: 100px; background: rgba(0,0,0,0.45); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.2); font-size: 10.5px; letter-spacing: 0.04em; color: rgba(255,255,255,0.95); font-weight: 500; }
 
-/* SAVE — plain outlined icon, no circle */
-.card-save { position: absolute; top: 12px; right: 12px; z-index: 3; width: 30px; height: 30px; background: none; border: none; box-shadow: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+/* LIQUID GLASS save */
+.card-save { position: absolute; top: 12px; right: 12px; z-index: 3; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.card-save:hover { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); }
 
 /* CARD BODY */
 .card-body { padding: 0 15px 15px; display: flex; flex-direction: column; position: relative; z-index: 2; background: transparent; margin-top: auto; }
