@@ -23,8 +23,8 @@ export default function PropertyCard({ property }: { property: Property }) {
           src={property.image}
           alt={property.name}
           width={275}
-          height={500}
-          style={{ width: "100%", height: "calc(100% + 280px)", objectFit: "cover", objectPosition: "center top", display: "block" }}
+          height={430}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
           className="card-img"
         />
         <div className="card-overlay" />

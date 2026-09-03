@@ -22,9 +22,12 @@ body {
   color: var(--text);
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: #111; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
@@ -45,7 +48,9 @@ body {
 .profile-dots:hover { background: rgba(255,255,255,0.07); color: var(--text); }
 
 /* MAIN */
-.main { margin-left: var(--sidebar-w); flex: 1; background: #111111; min-height: 100vh; overflow-y: auto; }
+/* min-width:0 lets this flex child shrink instead of being widened by the card row,
+   so the card row's overflow never becomes page-level horizontal scroll. */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; max-width: calc(100% - var(--sidebar-w)); background: #111111; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
 
 /* HERO */
 .hero { padding: 65px 0 36px 65px; }
@@ -57,31 +62,36 @@ body {
 .search-input:focus { border-color: rgba(255,255,255,0.35); }
 
 /* CONTENT */
-.content { padding: 0 40px 60px 65px; }
-.section-label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #eeeeee; margin-bottom: 16px; }
+/* No horizontal padding here — the row scroller carries its own so cards can
+   run past the right screen edge while the label stays aligned and stationary. */
+.content { padding: 0 0 60px; }
+.section-label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #eeeeee; margin-bottom: 16px; padding: 0 40px 0 65px; }
+.section-heading { margin-top: 40px; }
+.section-heading .section-label { margin-bottom: 4px; }
+.section-subtitle { font-size: 12.5px; color: var(--text-muted); padding: 0 40px 0 65px; margin-bottom: 16px; }
 
-/* GRID */
-.cards-grid { display: grid; grid-template-columns: repeat(4, 275px); gap: 18px; }
+/* CARD ROW — the only horizontally scrollable element on the page */
+.cards-grid { display: flex; gap: 18px; overflow-x: auto; overflow-y: hidden; padding: 6px 40px 6px 65px; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 
 /* CARD */
-.card { width: 275px; height: auto; border-radius: 31px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: transform 0.22s, border-color 0.22s; display: flex; flex-direction: column; flex-shrink: 0; }
+.card { width: 275px; height: 430px; border-radius: 31px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: transform 0.22s, border-color 0.22s; display: flex; flex-direction: column; flex-shrink: 0; position: relative; }
 .card:hover { transform: translateY(-4px); border-color: var(--border2); }
 
 /* CARD THUMB */
-.card-thumb { width: 100%; height: 220px; position: relative; flex-shrink: 0; overflow: hidden; z-index: 0; }
+.card-thumb { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
 .card-img { transition: transform 0.4s; }
 .card:hover .card-img { transform: scale(1.05); }
-.card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: -280px; background: linear-gradient(to bottom, transparent 0%, transparent 12%, rgba(0,0,0,0.25) 25%, rgba(0,0,0,0.6) 38%, rgba(0,0,0,0.9) 52%, rgba(0,0,0,1) 62%, rgba(0,0,0,1) 100%); pointer-events: none; z-index: 1; }
+.card-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.85) 75%, #000000 100%); pointer-events: none; z-index: 1; }
 
 /* LIQUID GLASS badge */
-.card-badge { position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 11px; border-radius: 100px; background: rgba(255,255,255,0.12); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.3); font-size: 10.5px; letter-spacing: 0.04em; color: rgba(255,255,255,0.95); font-weight: 500; }
+.card-badge { position: absolute; top: 12px; left: 12px; z-index: 3; padding: 4px 11px; border-radius: 100px; background: rgba(0,0,0,0.45); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.2); font-size: 10.5px; letter-spacing: 0.04em; color: rgba(255,255,255,0.95); font-weight: 500; }
 
 /* LIQUID GLASS save */
-.card-save { position: absolute; top: 12px; right: 12px; z-index: 3; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.12); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-.card-save:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.45); }
+.card-save { position: absolute; top: 12px; right: 12px; z-index: 3; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(18px) saturate(200%); -webkit-backdrop-filter: blur(18px) saturate(200%); border: 1px solid rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.card-save:hover { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); }
 
 /* CARD BODY */
-.card-body { padding: 0 15px 15px; display: flex; flex-direction: column; flex: 1; position: relative; z-index: 2; background: transparent; margin-top: -16px; justify-content: flex-end; }
+.card-body { padding: 0 15px 15px; display: flex; flex-direction: column; position: relative; z-index: 2; background: transparent; margin-top: auto; }
 .card-name { font-size: 17px; font-weight: 600; letter-spacing: -0.025em; color: #eeeeee; margin-bottom: 6px; line-height: 1.2; padding-top: 14px; }
 .card-price-row { display: flex; align-items: center; justify-content: space-between; }
 .card-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
@@ -90,12 +100,12 @@ body {
 .meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
 .card-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; align-content: flex-start; align-items: flex-start; }
 .pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; }
-.p-blue  { background: rgba(59,130,246,0.18);  border: 1px solid rgba(59,130,246,0.36);  color: #93c5fd; }
-.p-green { background: rgba(34,197,94,0.15);   border: 1px solid rgba(34,197,94,0.3);    color: #86efac; }
-.p-amber { background: rgba(245,158,11,0.15);  border: 1px solid rgba(245,158,11,0.28);  color: #fcd34d; }
-.p-teal  { background: rgba(20,184,166,0.16);  border: 1px solid rgba(20,184,166,0.3);   color: #5eead4; }
-.p-olive { background: rgba(101,163,13,0.15);  border: 1px solid rgba(101,163,13,0.28);  color: #bef264; }
-.p-dim   { background: rgba(255,255,255,0.05); border: 1px solid var(--border2);          color: var(--text-muted); }
+.p-blue  { background: rgba(59,130,246,0.18);  color: #93c5fd; }
+.p-green { background: rgba(34,197,94,0.15);   color: #86efac; }
+.p-amber { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+.p-teal  { background: rgba(20,184,166,0.16);  color: #5eead4; }
+.p-olive { background: rgba(101,163,13,0.15);  color: #bef264; }
+.p-dim   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 .reserve-wrap { margin-top: 12px; flex-shrink: 0; }
-.reserve-btn { width: 100%; padding: 9px; border-radius: 42px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); color: #eeeeee; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; }
-.reserve-btn:hover { background: #ffffff; color: #111111; border-color: #ffffff; }
+.reserve-btn { width: 100%; padding: 9px; border-radius: 42px; background: rgba(255,255,255,0.06); border: none; color: #eeeeee; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; }
+.reserve-btn:hover { background: #ffffff; color: #111111; }
