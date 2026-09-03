@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { properties } from "@/lib/properties";
+import { properties, popularDestinations } from "@/lib/properties";
 import PropertyCard from "./PropertyCard";
+
+function matchesQuery(p: { name: string; location: string }, query: string) {
+  return (
+    !query ||
+    p.name.toLowerCase().includes(query.toLowerCase()) ||
+    p.location.toLowerCase().includes(query.toLowerCase())
+  );
+}
 
 export default function PropertyGrid() {
   const [query, setQuery] = useState("");
 
-  const filtered = properties.filter(
-    (p) =>
-      !query ||
-      p.name.toLowerCase().includes(query.toLowerCase()) ||
-      p.location.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = properties.filter((p) => matchesQuery(p, query));
+  const filteredPopular = popularDestinations.filter((p) => matchesQuery(p, query));
 
   return (
     <>
@@ -37,6 +41,16 @@ export default function PropertyGrid() {
         <div className="section-label">Featured properties</div>
         <div className="cards-grid">
           {filtered.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+
+        <div className="section-heading">
+          <div className="section-label">Popular destinations</div>
+          <div className="section-subtitle">Handpicked hideaways loved by our travelers</div>
+        </div>
+        <div className="cards-grid">
+          {filteredPopular.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
         </div>
