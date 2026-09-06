@@ -74,9 +74,11 @@ export function searchHref(p: Partial<SearchParams>) {
   return qs ? `/search?${qs}` : "/search";
 }
 
-/** Property page link that carries the traveller's dates and party along. */
+/** Property page link that carries the traveller's search, dates and party along
+    (so "Back to search" can restore the results they came from). */
 export function propertyHref(id: string, p?: Partial<SearchParams> | null, stopId?: string) {
   const sp = new URLSearchParams();
+  if (p?.q) sp.set("q", p.q);
   if (p?.from) sp.set("from", p.from);
   if (p?.to) sp.set("to", p.to);
   if (p?.adults !== undefined) sp.set("adults", String(p.adults));
