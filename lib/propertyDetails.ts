@@ -13,7 +13,8 @@ export type PropertyKind =
   | "coastal"
   | "safari"
   | "heritage"
-  | "countryside";
+  | "countryside"
+  | "townhouse";
 
 export interface Highlight {
   icon: IconName;
@@ -420,6 +421,41 @@ const kinds: Record<PropertyKind, KindContent> = {
       { title: "Pets", text: "Dogs are very welcome across the estate; please let us know how many are coming." },
     ],
   },
+  townhouse: {
+    label: "City apartment",
+    highlights: [
+      { icon: "home", title: "Lived-in, not staged", text: "A real apartment in a real neighbourhood, restored with its original floors and shutters." },
+      { icon: "sun", title: "Private terrace", text: "Coffee in the morning and an aperitivo at dusk, above the rooftops of the old town." },
+      { icon: "map", title: "Everything on foot", text: "Piazzas, markets and the best trattorias within a ten-minute walk of the door." },
+      { icon: "concierge", title: "Host on call", text: "A local host who meets you with the keys, books tables and knows which streets to avoid at noon." },
+    ],
+    amenities: [
+      { title: "Comfort", items: [{ icon: "wifi", label: "High-speed WiFi" }, { icon: "snow", label: "Air conditioning" }, { icon: "laundry", label: "Washer & dryer" }, { icon: "bed", label: "Linen bedding" }] },
+      { title: "Kitchen & dining", items: [{ icon: "chef", label: "Fully equipped kitchen" }, { icon: "coffee", label: "Espresso machine" }, { icon: "wine", label: "Welcome bottle of local wine" }, { icon: "restaurant", label: "Breakfast basket on arrival" }] },
+      { title: "Outdoors", items: [{ icon: "sun", label: "Private terrace" }, { icon: "bike", label: "Bicycles" }, { icon: "map", label: "Walking tours arranged" }, { icon: "car", label: "Airport transfer on request" }] },
+      { title: "Services", items: shared.services },
+      { title: "In-room", items: shared.inRoom },
+    ],
+    gallery: ["1502672260266-1c1ef2d93688", "1522771739844-6a9f6d5f14af", "1600210492486-724fe5c67fb0", "1512918728675-ed5a9ecdebfd", "1493809842364-78817add7ffc", "1560448204-e02f11c3d0e2"],
+    roomImages: ["1522771739844-6a9f6d5f14af", "1590490360182-c33d57733427", "1493809842364-78817add7ffc"],
+    rooms: [
+      { name: "Classic Room", size: 28, bed: "1 queen bed", sleeps: 2, view: "Courtyard view", features: [{ label: "Original tilework", color: "amber" }, { label: "Rain shower", color: "teal" }, { label: "Work desk", color: "dim" }] },
+      { name: "Terrace Suite", size: 48, bed: "1 king bed", sleeps: 2, view: "Rooftop view", features: [{ label: "Private terrace", color: "green" }, { label: "Kitchenette", color: "olive" }, { label: "Sunset facing", color: "amber" }] },
+      { name: "Whole Apartment", size: 95, bed: "1 king bed + 1 queen", sleeps: 4, view: "Old-town rooftops", features: [{ label: "Two bedrooms", color: "blue" }, { label: "Full kitchen", color: "olive" }, { label: "Terrace dining", color: "green" }, { label: "Host on call", color: "dim" }] },
+    ],
+    reviews: [
+      { name: "Elena Rossi", from: "Milan, Italy", date: "May 2026", score: 5, title: "Felt like our own place in the city", text: "The host met us with keys and a list of places we'd never have found. We ate breakfast on the terrace every morning and stayed out far too late every night.", stay: "3 nights · Terrace Suite" },
+      { name: "James Whitaker", from: "London, UK", date: "Apr 2026", score: 5, title: "Perfect base for a first visit", text: "Quiet street, five minutes from everything. The apartment is beautifully restored and the espresso machine got a serious workout.", stay: "4 nights · Whole Apartment" },
+      { name: "Sofia Andersson", from: "Gothenburg, Sweden", date: "Mar 2026", score: 4, title: "Charming, a few stairs", text: "It's an old building, so expect a walk-up. Once you're in, it's calm, cool and lovely. The welcome wine was a nice touch.", stay: "2 nights · Classic Room" },
+    ],
+    checkIn: "From 15:00",
+    checkOut: "Until 10:30",
+    policies: [
+      { title: "Cancellation", text: "Free cancellation up to 7 days before arrival. Later cancellations are charged the first night; no-shows at 100%." },
+      { title: "Children", text: "Children are welcome. A travel cot is available on request." },
+      { title: "Pets", text: "Small, well-behaved pets are welcome for a cleaning fee." },
+    ],
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -760,6 +796,57 @@ const bespoke: Record<string, Bespoke> = {
     locationBlurb: "The villa is on the Cobá road, in the jungle between Tulum town and the beach. The beach clubs, the Mayan ruins and the region's cenotes are all within fifteen minutes by car.",
     bathrooms: 4,
     sizeSqm: 400,
+  },
+  "trastevere-condo": {
+    kind: "townhouse",
+    tagline: "A restored top-floor condo in the cobbled lanes of Trastevere.",
+    description: [
+      "Historic Trastevere Condo sits on the top floor of a 17th-century palazzetto on a quiet lane behind Piazza di Santa Maria. Terracotta floors, beamed ceilings and tall shuttered windows have been kept; the kitchen and bathroom are new.",
+      "A private roof terrace looks across the tiled rooftops to the Gianicolo. The host lives downstairs, meets you with the keys and has a list of trattorias that don't take bookings from strangers.",
+    ],
+    address: "Via della Scala 21, 00153 Roma RM, Italy",
+    nearby: [
+      { icon: "map", name: "Piazza di Santa Maria in Trastevere", distance: "3 min walk" },
+      { icon: "train", name: "Trastevere station", distance: "15 min walk" },
+      { icon: "plane", name: "Rome Fiumicino (FCO)", distance: "40 min drive" },
+    ],
+    locationBlurb: "The condo is in the heart of Trastevere, Rome's most walkable neighbourhood, on the west bank of the Tiber. The Pantheon and Campo de' Fiori are twenty minutes on foot across the river; the Vatican is a short tram ride north.",
+    bathrooms: 1,
+    sizeSqm: 95,
+  },
+  "duomo-light": {
+    kind: "townhouse",
+    tagline: "A light-filled loft with the Duomo in the window.",
+    description: [
+      "Duomo Light Apartment occupies the raised first floor of a Renaissance palazzo on a lane between the cathedral and the Bargello. Six-metre ceilings, exposed brick and a wall of leaded glass make it the brightest apartment in the centro storico.",
+      "The kitchen is built for cooking what you bring back from Sant'Ambrogio market; the terrace catches the evening bells. A host is on call for museum tickets and tables that are otherwise impossible to get.",
+    ],
+    address: "Via dei Servi 12, 50122 Firenze FI, Italy",
+    nearby: [
+      { icon: "map", name: "Piazza del Duomo", distance: "4 min walk" },
+      { icon: "train", name: "Santa Maria Novella station", distance: "12 min walk" },
+      { icon: "plane", name: "Florence Peretola (FLR)", distance: "25 min drive" },
+    ],
+    locationBlurb: "The apartment is on Via dei Servi, the straight street that runs from the Duomo to Piazza Santissima Annunziata. The Uffizi, Ponte Vecchio and the Accademia are all within ten minutes on foot.",
+    bathrooms: 1,
+    sizeSqm: 95,
+  },
+  "canal-azul": {
+    kind: "townhouse",
+    tagline: "A quiet retreat on a side canal in Cannaregio.",
+    description: [
+      "Canal Azul Retreat is the piano nobile of a Gothic palazzetto on a side canal in Cannaregio, the residential quarter north of the Rialto. Water laps below the windows; the street door opens onto a private landing stage.",
+      "Inside, Venetian terrazzo floors, Murano glass and linen curtains keep things calm and cool. Breakfast arrives from the bakery on the corner, and the host's boat is available for the lagoon islands.",
+    ],
+    address: "Fondamenta della Misericordia 2551, 30121 Venezia VE, Italy",
+    nearby: [
+      { icon: "boat", name: "Rialto Bridge", distance: "12 min walk" },
+      { icon: "train", name: "Venezia Santa Lucia station", distance: "15 min walk" },
+      { icon: "plane", name: "Venice Marco Polo (VCE)", distance: "30 min by water taxi" },
+    ],
+    locationBlurb: "The retreat is on the Misericordia canal in Cannaregio, a quiet district of bacari and local life away from the crowds of San Marco. The Rialto and the station are both a fifteen-minute walk; the airport is a water-taxi ride across the lagoon.",
+    bathrooms: 1,
+    sizeSqm: 95,
   },
   "queenstown-vineyard": {
     kind: "countryside",

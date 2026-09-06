@@ -81,12 +81,4 @@ export function useBooking() {
   return ctx;
 }
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/* Hand-rolled rather than Intl so the server and browser produce byte-identical
-   markup (Node's ICU and Chrome punctuate "en-GB" short dates differently). */
-export function formatDate(iso: string) {
-  const d = new Date(iso + "T12:00:00");
-  return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
-}
+export { formatDate } from "@/lib/trip";

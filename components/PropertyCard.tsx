@@ -14,19 +14,36 @@ const pillClass: Record<PillColor, string> = {
   dim:   "p-dim",
 };
 
-export default function PropertyCard({ property }: { property: Property }) {
+/* Shown if a property's remote photo can't be fetched, so a card never renders broken. */
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80";
+
+export default function PropertyCard({
+  property,
+  href,
+  cta = "Reserve →",
+}: {
+  property: Property;
+  /** Override the link target, e.g. to carry search dates and party along. */
+  href?: string;
+  /** Label on the card's bottom button. */
+  cta?: string;
+}) {
   const [saved, setSaved] = useState(false);
+  const [src, setSrc] = useState(property.image);
 
   return (
-    <Link href={`/property/${property.id}`} className="card" aria-label={`${property.name}, ${property.location}`}>
+    <Link href={href ?? `/property/${property.id}`} className="card" aria-label={`${property.name}, ${property.location}`}>
       <div className="card-thumb">
         <Image
-          src={property.image}
+          src={src}
           alt={property.name}
           width={275}
           height={430}
           style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
           className="card-img"
+          onError={() => {
+            if (src !== FALLBACK_IMAGE) setSrc(FALLBACK_IMAGE);
+          }}
         />
         <div className="card-overlay" />
         <div className="card-badge">{property.location}</div>
@@ -88,7 +105,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           ))}
         </div>
         <div className="reserve-wrap">
-          <span className="reserve-btn">Reserve →</span>
+          <span className="reserve-btn">{cta}</span>
         </div>
       </div>
     </Link>

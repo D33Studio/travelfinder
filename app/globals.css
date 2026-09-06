@@ -12,6 +12,17 @@
   --text-muted: rgba(238,238,238,0.45);
   --text-dim: rgba(238,238,238,0.25);
   --gold: #c9a96e;
+  --gold-soft: rgba(201,169,110,0.12);
+  --gold-line: rgba(201,169,110,0.45);
+  --success: #86efac;
+  --success-soft: rgba(34,197,94,0.1);
+  --success-line: rgba(34,197,94,0.28);
+  --danger: #fca5a5;
+  --danger-soft: rgba(239,68,68,0.1);
+  --danger-line: rgba(239,68,68,0.3);
+  --radius-card: 31px;
+  --radius-panel: 26px;
+  --radius-pill: 100px;
 }
 
 html, body { height: 100%; }
@@ -40,6 +51,8 @@ body {
 .nav-item:hover { background: rgba(255,255,255,0.06); }
 .nav-item.active { background: rgba(255,255,255,0.08); color: #ffffff; }
 .nav-item.active .ni { stroke: #ffffff; }
+.nav-badge { margin-left: auto; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 100px; background: var(--gold); color: #111111; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+a.sidebar-logo { text-decoration: none; }
 .ni { width: 16px; height: 16px; stroke: #eeeeee; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 .sidebar-profile { padding: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
 .profile-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#c9a96e,#8b6914); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #111; flex-shrink: 0; }
@@ -349,6 +362,29 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 
 /* Similar row */
 .prop-similar { padding-top: 10px; }
+
+/* ================================================================== */
+/*  FLOW PAGES (trip overview, checkout, confirmation)                  */
+/*  Centred, narrower canvases that share the property page's gutters. */
+/* ================================================================== */
+.flow { padding: 36px 40px 80px 65px; }
+.flow-inner { max-width: 1080px; margin: 0 auto; }
+.flow-inner.narrow { max-width: 760px; }
+.flow-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; margin-bottom: 28px; }
+.flow-icon { width: 56px; height: 56px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border2); display: inline-flex; align-items: center; justify-content: center; color: #eeeeee; box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08); margin-bottom: 6px; }
+.flow-title { font-size: 35px; font-weight: 700; letter-spacing: -0.03em; color: #eeeeee; line-height: 1.1; }
+.flow-subtitle { font-size: 17px; font-weight: 500; color: rgba(238,238,238,0.75); letter-spacing: -0.01em; }
+.flow-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 12px; color: rgba(238,238,238,0.85); }
+.flow-panel { padding: 22px; border-radius: var(--radius-panel); background: var(--surface); border: 1px solid var(--border); }
+.flow-steps { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 26px; font-size: 12px; color: var(--text-muted); }
+.flow-step { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 8px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); }
+.flow-step b { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.08); color: #eeeeee; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.flow-step.on { color: #eeeeee; border-color: var(--gold-line); }
+.flow-step.on b { background: var(--gold); color: #111111; }
+.flow-step.done b { background: var(--success-soft); color: var(--success); }
+.flow-step-sep { color: var(--text-dim); }
+.ghost-btn.danger:hover { background: var(--danger-soft); border-color: var(--danger-line); color: var(--danger); }
+@media (max-width: 900px) { .flow { padding: 24px 20px 60px 24px; } }
 
 /* Empty state */
 .empty-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 120px; }
