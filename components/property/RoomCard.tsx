@@ -32,7 +32,7 @@ export default function RoomCard({ room }: { room: Room }) {
             <div className="room-view">{room.view}</div>
           </div>
           <div className="room-from">
-            <span>from</span> ${room.rates[0].price.toLocaleString()}
+            <span>from</span> ${room.rates[0].price.toLocaleString("en-US")}
           </div>
         </div>
 
@@ -66,9 +66,9 @@ export default function RoomCard({ room }: { room: Room }) {
                 </div>
                 <div className="rate-side">
                   <div className="rate-price">
-                    ${rate.price.toLocaleString()} <span>/night</span>
+                    ${rate.price.toLocaleString("en-US")} <span>/night</span>
                   </div>
-                  <div className="rate-total">${(rate.price * b.nights).toLocaleString()} for {b.nights} night{b.nights > 1 ? "s" : ""}</div>
+                  <div className="rate-total">${(rate.price * b.nights).toLocaleString("en-US")} for {b.nights} night{b.nights > 1 ? "s" : ""}</div>
                   <button
                     type="button"
                     className={`rate-btn${on ? " on" : ""}`}

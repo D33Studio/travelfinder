@@ -79,7 +79,7 @@ export default function PropertyCard({
         <div className="card-name">{property.name}</div>
         <div className="card-price-row">
           <div className="card-price">
-            ${property.price.toLocaleString()} <span>/night</span>
+            ${property.price.toLocaleString("en-US")} <span>/night</span>
           </div>
           <div className="card-meta">
             <div className="meta-chip">

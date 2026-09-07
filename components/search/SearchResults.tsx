@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
 import PropertyCard from "@/components/PropertyCard";
@@ -17,17 +18,24 @@ import {
 } from "@/lib/search";
 import { formatDate, guestsLabel, nightsBetween, plural } from "@/lib/trip";
 
-export default function SearchResults({ params }: { params: SearchParams }) {
+export default function SearchResults({ params, explicit = true }: { params: SearchParams; explicit?: boolean }) {
   const { ready, lastSearch, setLastSearch } = useTrip();
+  const router = useRouter();
   const serialized = serializeSearchParams(params);
 
   /* Remember the search so property pages can fall back to its dates and party.
-     Guarded so a store update doesn't re-trigger a write of the same value. */
+     A bare /search reopens the remembered dates and party (destination cleared)
+     instead of overwriting them with the defaults. Guarded so a store update
+     doesn't re-trigger a write of the same value. */
   useEffect(() => {
     if (!ready) return;
+    if (!explicit && lastSearch) {
+      router.replace(searchHref({ ...lastSearch, q: "" }));
+      return;
+    }
     if (lastSearch && serializeSearchParams(lastSearch) === serialized) return;
     setLastSearch(params);
-  }, [ready, lastSearch, serialized, params, setLastSearch]);
+  }, [ready, explicit, lastSearch, serialized, params, setLastSearch, router]);
 
   const groups = buildSearchResults(params);
   const matches = params.q ? searchProperties(params.q) : [];
