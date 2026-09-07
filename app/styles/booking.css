@@ -1,3 +1,63 @@
 /* ================================================================== */
-/*  booking screen styles — imported from app/layout.tsx                     */
+/*  booking screen styles — imported from app/layout.tsx               */
+/*  Property page ⇄ trip: edit banner, action area, trip line, nudge.  */
+/*  Every class here is prefixed `bkx-`; the panel shell stays `.bk*`. */
 /* ================================================================== */
+
+/* Edit-mode banner (top of the booking panel) */
+.bkx-editing { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; padding: 9px 12px; border-radius: 14px; background: var(--gold-soft); border: 1px solid var(--gold-line); font-size: 12px; color: #eeeeee; }
+.bkx-editing-text { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-weight: 500; letter-spacing: -0.01em; }
+.bkx-editing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); flex-shrink: 0; }
+.bkx-editing-link { display: inline-flex; align-items: center; gap: 5px; color: var(--gold); text-decoration: none; font-weight: 500; white-space: nowrap; border-radius: 100px; transition: color 0.15s; }
+.bkx-editing-link:hover { color: #eeeeee; }
+/* Same slot while the stored trip is still being read, so the panel doesn't jump. */
+.bkx-resolving { min-height: 35px; background: rgba(255,255,255,0.03); border-color: var(--border); }
+
+/* Skeletons */
+.bkx-skel,
+.bkx-skel-btn { display: block; background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%); background-size: 200% 100%; animation: bkx-shimmer 1.4s ease-in-out infinite; }
+.bkx-skel { height: 10px; border-radius: 100px; }
+.bkx-skel-md { width: 58%; }
+.bkx-skel-sm { width: 38%; margin-top: 6px; }
+.bkx-skeleton { display: flex; flex-direction: column; gap: 8px; }
+.bkx-skel-btn { height: 42px; border-radius: 42px; }
+.bkx-skel-btn-sm { height: 37px; opacity: 0.6; }
+.bkx-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* Action area */
+.bkx-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.bkx-primary { width: 100%; padding: 13px; font-size: 13.5px; }
+.bkx-secondary { width: 100%; justify-content: center; padding: 10px 14px; font-size: 12.5px; }
+.bkx-already { text-align: center; font-size: 11.5px; color: var(--text-muted); }
+.bkx-already a { color: #eeeeee; text-decoration: underline; text-underline-offset: 2px; }
+
+/* "Trip so far" row under the price breakdown */
+.bkx-tripline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+.bkx-tripline a { color: #eeeeee; text-decoration: none; font-weight: 500; white-space: nowrap; border-bottom: 1px solid var(--border2); transition: border-color 0.15s; }
+.bkx-tripline a:hover { border-color: #eeeeee; }
+
+/* Keyboard focus */
+.bkx-primary:focus-visible,
+.bkx-secondary:focus-visible,
+.bkx-editing-link:focus-visible,
+.bkx-already a:focus-visible,
+.bkx-tripline a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* "Choose a room to continue" adds .bkx-nudge to #rooms for a second: the
+   room cards pulse gold so the eye lands on where to click next. */
+.bkx-nudge .room { animation: bkx-pulse 1s ease-out; }
+
+@keyframes bkx-pulse {
+  0%   { border-color: var(--gold-line); box-shadow: 0 0 0 0 rgba(201,169,110,0.45); }
+  60%  { border-color: var(--gold-line); box-shadow: 0 0 0 6px rgba(201,169,110,0); }
+  100% { box-shadow: 0 0 0 0 rgba(201,169,110,0); }
+}
+@keyframes bkx-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bkx-skel, .bkx-skel-btn { animation: none; }
+  .bkx-nudge .room { animation: none; box-shadow: 0 0 0 2px var(--gold-line); }
+}

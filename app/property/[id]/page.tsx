@@ -15,8 +15,10 @@ import Reviews from "@/components/property/Reviews";
 import LocationSection from "@/components/property/LocationSection";
 import Policies from "@/components/property/Policies";
 import { allProperties, getPropertyDetail, getSimilarProperties } from "@/lib/propertyDetails";
+import { parseSearchParams, propertyHref, searchHref, type SearchParams } from "@/lib/search";
 
 type Params = Promise<{ id: string }>;
+type Query = Promise<Record<string, string | string[] | undefined>>;
 
 export function generateStaticParams() {
   return allProperties.map((p) => ({ id: p.id }));
@@ -41,10 +43,19 @@ const TABS = [
   { id: "policies", label: "Policies" },
 ];
 
-export default async function PropertyPage({ params }: { params: Params }) {
-  const { id } = await params;
+export default async function PropertyPage({ params, searchParams }: { params: Params; searchParams: Query }) {
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
   const detail = getPropertyDetail(id);
   if (!detail) notFound();
+
+  /* The URL carries the traveller's search (q/from/to/adults/children) and,
+     when editing, the stop id. Dates only count as chosen if they were sent. */
+  const initial = parseSearchParams(sp);
+  const hasDates = sp.from !== undefined || sp.to !== undefined;
+  const stopId = typeof sp.stop === "string" && sp.stop ? sp.stop : null;
+  /* Neighbouring stays inherit chosen dates; without any, the next page is
+     free to suggest dates that follow the trip's last stop. */
+  const carry: Partial<SearchParams> = hasDates ? initial : { q: initial.q };
 
   const similar = getSimilarProperties(detail);
 
@@ -54,7 +65,7 @@ export default async function PropertyPage({ params }: { params: Params }) {
       <div className="main">
         <div className="prop">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <Link href="/" className="crumb-back">
+            <Link href={searchHref(initial)} className="crumb-back">
               <Icon name="arrowLeft" size={13} />
               Back to search
             </Link>
@@ -99,7 +110,7 @@ export default async function PropertyPage({ params }: { params: Params }) {
 
           <PropertyTabs tabs={TABS} />
 
-          <BookingProvider detail={detail}>
+          <BookingProvider detail={detail} initial={initial} hasDates={hasDates} stopId={stopId}>
             <div className="prop-layout">
               <div className="prop-main">
                 <section id="overview" className="psec">
@@ -171,7 +182,7 @@ export default async function PropertyPage({ params }: { params: Params }) {
             <div className="section-subtitle">More {detail.kindLabel.toLowerCase()}s and hand-picked stays nearby in spirit</div>
           </div>
           <div className="cards-grid">
-            {similar.map((p) => <PropertyCard key={p.id} property={p} />)}
+            {similar.map((p) => <PropertyCard key={p.id} property={p} href={propertyHref(p.id, carry)} />)}
           </div>
         </div>
       </div>
