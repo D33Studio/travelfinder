@@ -146,15 +146,16 @@ a.sidebar-logo { text-decoration: none; }
 .card-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
 .card-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
 .card-meta { display: flex; gap: 5px; }
-.meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: rgba(238,238,238,0.92); display: flex; align-items: center; gap: 4px; }
 .card-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; align-content: flex-start; align-items: flex-start; }
-.pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; }
-.p-blue  { background: rgba(59,130,246,0.18);  color: #93c5fd; }
-.p-green { background: rgba(34,197,94,0.15);   color: #86efac; }
-.p-amber { background: rgba(245,158,11,0.15);  color: #fcd34d; }
-.p-teal  { background: rgba(20,184,166,0.16);  color: #5eead4; }
-.p-olive { background: rgba(101,163,13,0.15);  color: #bef264; }
-.p-dim   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+/* Feature tags: the tint stays on the background, the text is near-white for legibility. */
+.pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; color: rgba(245,245,245,0.94); }
+.p-blue  { background: rgba(59,130,246,0.22); }
+.p-green { background: rgba(34,197,94,0.2); }
+.p-amber { background: rgba(245,158,11,0.2); }
+.p-teal  { background: rgba(20,184,166,0.2); }
+.p-olive { background: rgba(101,163,13,0.2); }
+.p-dim   { background: rgba(255,255,255,0.08); }
 .reserve-wrap { margin-top: 12px; flex-shrink: 0; }
 .reserve-btn { display: block; width: 100%; padding: 9px; border-radius: 42px; background: rgba(255,255,255,0.06); border: none; color: #eeeeee; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; }
 .reserve-btn:hover, .card:hover .reserve-btn { background: #ffffff; color: #111111; }

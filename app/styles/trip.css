@@ -107,7 +107,7 @@
 .tr-stop-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
 .tr-stop-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
 .tr-stop-meta { display: flex; flex-wrap: wrap; gap: 5px; }
-.tr-stop-meta .meta-chip { background: rgba(0,0,0,0.35); color: rgba(238,238,238,0.75); }
+.tr-stop-meta .meta-chip { background: rgba(0,0,0,0.35); color: rgba(238,238,238,0.92); }
 .tr-stop-room { min-width: 0; }
 .tr-stop-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
