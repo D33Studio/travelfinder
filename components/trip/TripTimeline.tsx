@@ -16,7 +16,7 @@ export default function TripTimeline({
   onSelect: (id: string) => void;
 }) {
   return (
-    <div className="tr-timeline" role="group" aria-label="Stops in order">
+    <div className="pill-row tr-timeline" role="group" aria-label="Stops in order">
       {stops.map((stop, i) => {
         const on = stop.id === activeId;
         return (

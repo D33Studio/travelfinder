@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTrip } from "@/components/TripContext";
@@ -82,50 +83,100 @@ function isActive(item: NavItem, pathname: string) {
   return item.match.some((m) => (m === "/" ? pathname === "/" : pathname === m || pathname.startsWith(m + "/")));
 }
 
+const NAV_ID = "site-nav";
+
+/* On small screens the sidebar is an off-canvas drawer: a hamburger at the top
+   left opens it, and it closes on navigation, the backdrop, its X or Escape. */
 export default function Sidebar() {
   const pathname = usePathname();
   const trip = useTrip();
   const stopCount = trip.ready ? trip.stops.length : 0;
+  const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    closeBtn.current?.focus();
+    const onKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  const close = (refocus: boolean) => {
+    setOpen(false);
+    if (refocus) toggle.current?.focus();
+  };
 
   return (
-    <aside className="sidebar">
-      <Link href="/" className="sidebar-logo">
-        Journey<span>.</span>
-      </Link>
-      <nav className="sidebar-nav">
-        {navItems.map((item) => {
-          const active = isActive(item, pathname);
-          const inert = item.href === "#";
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`nav-item${active ? " active" : ""}`}
-              aria-current={active ? "page" : undefined}
-              onClick={inert ? (e) => e.preventDefault() : undefined}
-            >
-              {item.icon}
-              {item.label}
-              {item.label === "Trips" && stopCount > 0 && (
-                <span className="nav-badge" aria-label={`${stopCount} stops in your trip`}>
-                  {stopCount}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="sidebar-profile">
-        <div className="profile-avatar">D</div>
-        <span className="profile-name">Dan</span>
-        <div className="profile-dots">
-          <svg viewBox="0 0 20 20" fill="currentColor" stroke="none" width="14" height="14">
-            <circle cx="4" cy="10" r="1.5" />
-            <circle cx="10" cy="10" r="1.5" />
-            <circle cx="16" cy="10" r="1.5" />
+    <>
+      <button
+        ref={toggle}
+        type="button"
+        className="sidebar-toggle"
+        aria-label="Open menu"
+        aria-expanded={open}
+        aria-controls={NAV_ID}
+        onClick={() => setOpen(true)}
+      >
+        <svg className="ni" viewBox="0 0 24 24">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+      <div className={`sidebar-backdrop${open ? " show" : ""}`} onClick={() => close(true)} aria-hidden="true" />
+
+      <aside id={NAV_ID} className={`sidebar${open ? " open" : ""}`}>
+        <button ref={closeBtn} type="button" className="sidebar-close" aria-label="Close menu" onClick={() => close(true)}>
+          <svg className="ni" viewBox="0 0 24 24">
+            <path d="M18 6L6 18M6 6l12 12" />
           </svg>
+        </button>
+        <Link href="/" className="sidebar-logo" onClick={() => close(false)}>
+          Journey<span>.</span>
+        </Link>
+        <nav className="sidebar-nav">
+          {navItems.map((item) => {
+            const active = isActive(item, pathname);
+            const inert = item.href === "#";
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`nav-item${active ? " active" : ""}`}
+                aria-current={active ? "page" : undefined}
+                onClick={(e) => {
+                  if (inert) e.preventDefault();
+                  else close(false);
+                }}
+              >
+                {item.icon}
+                {item.label}
+                {item.label === "Trips" && stopCount > 0 && (
+                  <span className="nav-badge" aria-label={`${stopCount} stops in your trip`}>
+                    {stopCount}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="sidebar-profile">
+          <div className="profile-avatar">D</div>
+          <span className="profile-name">Dan</span>
+          <div className="profile-dots">
+            <svg viewBox="0 0 20 20" fill="currentColor" stroke="none" width="14" height="14">
+              <circle cx="4" cy="10" r="1.5" />
+              <circle cx="10" cy="10" r="1.5" />
+              <circle cx="16" cy="10" r="1.5" />
+            </svg>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

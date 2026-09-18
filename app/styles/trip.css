@@ -4,15 +4,19 @@
 /*       totals, stop cards, CTA, skeleton, empty state, floating tray */
 /* ================================================================== */
 
-/* ---------- Header chips + guests popover ---------- */
-.tr-chips { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+/* ---------- Header pill + guests popover ---------- */
+/* The wrapper spans the header so the pill row inside can bleed and scroll;
+   the popover hangs off the wrapper, outside that scroller's clip. */
+.tr-guests { position: relative; align-self: stretch; }
+.tr-chips { margin-top: 2px; }
 .tr-chip-flag { font-size: 13px; line-height: 1; }
-.tr-guests { position: relative; }
 .tr-chip-btn { font-family: inherit; line-height: 1.3; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
 .tr-chip-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 .tr-chip-btn[aria-expanded="true"] { background: var(--gold-soft); border-color: var(--gold-line); }
-.tr-chip-chev { color: var(--text-muted); transition: transform 0.22s; }
-.tr-chip-btn[aria-expanded="true"] .tr-chip-chev { transform: rotate(180deg); }
+/* One pill, three plain-text segments divided by hairlines — no icons. */
+.tr-summary { gap: 0; padding: 0; font-size: 13px; font-weight: 500; color: rgba(238,238,238,0.9); }
+.tr-seg { padding: 8px 16px; white-space: nowrap; }
+.tr-seg + .tr-seg { border-left: 1px solid var(--border2); }
 .tr-guests-pop { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 40; width: 280px; max-width: 80vw; padding: 14px 16px 12px; border-radius: 18px; background: #161616; border: 1px solid var(--border2); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.8); outline: none; display: flex; flex-direction: column; gap: 12px; text-align: left; cursor: default; }
 .tr-guests-pop .stepper { font-size: 12.5px; }
 .tr-stepper-text { display: flex; flex-direction: column; gap: 1px; }
@@ -21,7 +25,7 @@
 .tr-guests-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text-dim); }
 
 /* ---------- Timeline chips ---------- */
-.tr-timeline { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 6px; margin: 4px 0 26px; }
+.tr-timeline { gap: 6px; margin-top: 4px; margin-bottom: 26px; }
 .tr-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 100px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-family: inherit; font-size: 13px; letter-spacing: -0.01em; cursor: pointer; transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s; }
 .tr-chip b { font-weight: 600; color: #eeeeee; }
 .tr-chip:hover { background: rgba(255,255,255,0.04); border-color: var(--border2); transform: translateY(-1px); }
@@ -69,8 +73,11 @@
 .tr-notice .notice-tag .dot { background: #fcd34d; box-shadow: 0 0 8px rgba(252,211,77,0.8); }
 
 /* ---------- Stop cards ---------- */
-.tr-stops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 26px; }
-.tr-stop-wrap { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+/* Same 275px cards as the home page rows, in a sideways scroller that runs
+   past the page gutters; the vertical padding keeps the hover lift unclipped. */
+.tr-stops { display: flex; gap: 28px; margin: 26px -40px 0 -65px; padding: 6px 40px 6px 65px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; }
+.tr-stops::-webkit-scrollbar { display: none; }
+.tr-stop-wrap { display: flex; flex-direction: column; gap: 10px; width: 275px; flex-shrink: 0; }
 .tr-stop-label { align-self: flex-start; padding: 5px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 12px; font-weight: 500; color: var(--text-muted); transition: background 0.2s, color 0.2s, border-color 0.2s; }
 .tr-stop-label.on { background: var(--gold); border-color: var(--gold); color: #111111; }
 
@@ -113,13 +120,12 @@
 .tr-skeleton { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .tr-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .tr-skel { display: block; border-radius: 100px; background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: tr-shimmer 1.4s ease-in-out infinite; }
-.tr-skel-sub { width: 110px; height: 18px; margin-top: 2px; }
-.tr-skel-chip { width: 96px; height: 30px; }
+.tr-skel-chip { width: 300px; max-width: 100%; height: 36px; margin-top: 2px; }
 .tr-skel-tchip { width: 180px; height: 38px; }
 .tr-skel-map { width: 100%; aspect-ratio: 21 / 9; min-height: 300px; border-radius: var(--radius-card); border: 1px solid var(--border); }
 .tr-skel-total { width: 260px; height: 34px; }
 .tr-skel-btn { width: 150px; height: 34px; }
-.tr-skel-card { aspect-ratio: 3 / 4; min-height: 380px; border-radius: var(--radius-card); border: 1px solid var(--border); }
+.tr-skel-card { width: 275px; flex-shrink: 0; aspect-ratio: 3 / 4; min-height: 380px; border-radius: var(--radius-card); border: 1px solid var(--border); }
 
 /* ---------- Empty trip ---------- */
 .tr-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 60px 0 40px; }
@@ -165,16 +171,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tr-route-dash, .tr-skel, .tr-tray { animation: none; }
-  .tr-chip, .tr-chip-btn, .tr-chip-chev, .tr-stop, .tr-stop-img, .tr-stop-label, .tr-marker, .tr-marker-card, .tr-marker-dot { transition: none; }
+  .tr-chip, .tr-chip-btn, .tr-stop, .tr-stop-img, .tr-stop-label, .tr-marker, .tr-marker-card, .tr-marker-dot { transition: none; }
   .tr-chip:hover, .tr-stop:hover { transform: translateZ(0); }
   .tr-stop:hover .tr-stop-img { transform: none; }
 }
 
-@media (max-width: 1100px) {
-  .tr-stops { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) {
+  .tr-stops { margin-left: -24px; margin-right: -20px; padding-left: 24px; padding-right: 20px; }
 }
 @media (max-width: 720px) {
-  .tr-stops { grid-template-columns: 1fr; }
   .tr-total-row { flex-direction: column; align-items: flex-start; }
   .tr-cta { flex-direction: column; align-items: stretch; }
   .tr-cta-actions { justify-content: flex-end; }
