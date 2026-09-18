@@ -54,14 +54,18 @@ body {
 .nav-badge { margin-left: auto; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 100px; background: var(--gold); color: #111111; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 a.sidebar-logo { text-decoration: none; }
 .ni { width: 16px; height: 16px; stroke: #eeeeee; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-.sidebar-toggle, .sidebar-close, .sidebar-backdrop { display: none; }
+.topbar, .sidebar-close, .sidebar-backdrop { display: none; }
 .sidebar-profile { padding: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
 
-/* Small screens: the sidebar is an off-canvas drawer behind a hamburger at the top left. */
+/* Small screens: the sidebar is an off-canvas drawer opened from a top bar
+   that sits in the page flow (it scrolls away rather than sticking). */
 @media (max-width: 900px) {
   .sidebar { width: 240px; min-width: 240px; z-index: 81; transform: translateX(-100%); visibility: hidden; box-shadow: 0 24px 60px -20px rgba(0,0,0,0.9); transition: transform 0.25s ease, visibility 0s linear 0.25s; }
   .sidebar.open { transform: none; visibility: visible; transition-delay: 0s; }
-  .sidebar-toggle { display: inline-flex; align-items: center; justify-content: center; position: fixed; top: 14px; left: 14px; z-index: 35; width: 40px; height: 40px; border-radius: 50%; background: rgba(17,17,17,0.7); backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); border: 1px solid var(--border2); color: #eeeeee; cursor: pointer; }
+  .topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px 4px; }
+  .topbar-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .topbar-logo span { color: #ffffff; }
+  .sidebar-toggle { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); color: #eeeeee; cursor: pointer; flex-shrink: 0; }
   .sidebar-close { display: inline-flex; align-items: center; justify-content: center; position: absolute; top: 20px; right: 14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); color: #eeeeee; cursor: pointer; }
   .sidebar-toggle:hover, .sidebar-close:hover { background: rgba(255,255,255,0.1); }
   .sidebar-toggle:focus-visible, .sidebar-close:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
@@ -93,7 +97,7 @@ a.sidebar-logo { text-decoration: none; }
 .pill-row > :first-child { margin-left: auto; }
 .pill-row > :last-child { margin-right: auto; }
 @media (max-width: 900px) {
-  .pill-row { margin-left: -24px; margin-right: -20px; padding-left: 24px; padding-right: 20px; }
+  .pill-row { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
 }
 
 /* HERO */
@@ -413,8 +417,7 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .flow-step.done b { background: var(--success-soft); color: var(--success); }
 .flow-step-sep { color: var(--text-dim); }
 .ghost-btn.danger:hover { background: var(--danger-soft); border-color: var(--danger-line); color: var(--danger); }
-/* Extra top room on small screens so the first row clears the menu button. */
-@media (max-width: 900px) { .flow { padding: 64px 20px 60px 24px; } }
+@media (max-width: 900px) { .flow { padding: 20px 20px 60px; } }
 
 /* Empty state */
 .empty-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 120px; }
@@ -422,6 +425,17 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .empty-cta { margin-top: 8px; }
 
 /* Responsive */
+/* Small screens: the page runs the full width with a 20px gutter — the wide
+   left gutter above only made sense next to the fixed sidebar. */
+@media (max-width: 900px) {
+  .hero { padding: 20px 20px 30px; }
+  .section-label, .section-subtitle { padding: 0 20px; }
+  .cards-grid { padding: 6px 20px; }
+  .prop { padding: 12px 20px 40px; }
+  .tabs { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; white-space: nowrap; }
+}
 @media (max-width: 1180px) {
   .prop-layout { grid-template-columns: 1fr; }
   .prop-side { position: static; }

@@ -85,9 +85,11 @@ function isActive(item: NavItem, pathname: string) {
 
 const NAV_ID = "site-nav";
 
-/* On small screens the sidebar is an off-canvas drawer: a hamburger at the top
-   left opens it, and it closes on navigation, the backdrop, its X or Escape. */
-export default function Sidebar() {
+/* The app shell: the sidebar plus the scrolling main column the page renders
+   into. On small screens the sidebar is an off-canvas drawer opened from a
+   hamburger in a top bar that scrolls away with the page; it closes on
+   navigation, the backdrop, its X or Escape. */
+export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const trip = useTrip();
   const stopCount = trip.ready ? trip.stops.length : 0;
@@ -115,19 +117,6 @@ export default function Sidebar() {
 
   return (
     <>
-      <button
-        ref={toggle}
-        type="button"
-        className="sidebar-toggle"
-        aria-label="Open menu"
-        aria-expanded={open}
-        aria-controls={NAV_ID}
-        onClick={() => setOpen(true)}
-      >
-        <svg className="ni" viewBox="0 0 24 24">
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
-      </button>
       <div className={`sidebar-backdrop${open ? " show" : ""}`} onClick={() => close(true)} aria-hidden="true" />
 
       <aside id={NAV_ID} className={`sidebar${open ? " open" : ""}`}>
@@ -177,6 +166,28 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
+
+      <div className="main">
+        <header className="topbar">
+          <button
+            ref={toggle}
+            type="button"
+            className="sidebar-toggle"
+            aria-label="Open menu"
+            aria-expanded={open}
+            aria-controls={NAV_ID}
+            onClick={() => setOpen(true)}
+          >
+            <svg className="ni" viewBox="0 0 24 24">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+          <Link href="/" className="topbar-logo">
+            Journey<span>.</span>
+          </Link>
+        </header>
+        {children}
+      </div>
     </>
   );
 }

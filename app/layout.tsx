@@ -5,6 +5,7 @@ import "./styles/search.css";
 import "./styles/booking.css";
 import "./styles/trip.css";
 import "./styles/checkout.css";
+import Sidebar from "@/components/Sidebar";
 import { TripProvider } from "@/components/TripContext";
 import TripTray from "@/components/trip/TripTray";
 
@@ -24,7 +25,7 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body>
         <TripProvider>
-          {children}
+          <Sidebar>{children}</Sidebar>
           <TripTray />
         </TripProvider>
       </body>

@@ -104,6 +104,10 @@
 }
 
 @media (max-width: 900px) {
+  .sb-hero { padding-right: 0; }
+  .sb-sticky { padding: 10px 20px; }
+  .sr-head { padding: 10px 20px 0; }
+  .sr-empty { margin: 40px 20px 0; }
   .sb-bar { display: grid; grid-template-columns: 1fr 1fr; padding: 8px; }
   .sb-field + .sb-field::before { display: none; }
   .sb-where { grid-column: 1 / -1; }
