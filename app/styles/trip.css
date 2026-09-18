@@ -17,6 +17,7 @@
 .tr-summary { gap: 0; padding: 0; font-size: 13px; font-weight: 500; color: rgba(238,238,238,0.9); }
 .tr-seg { padding: 8px 16px; white-space: nowrap; }
 .tr-seg + .tr-seg { border-left: 1px solid var(--border2); }
+.tr-seg-arrow { display: inline-block; vertical-align: -1px; margin: 0 6px; color: var(--text-muted); }
 .tr-guests-pop { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 40; width: 280px; max-width: 80vw; padding: 14px 16px 12px; border-radius: 18px; background: #161616; border: 1px solid var(--border2); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.8); outline: none; display: flex; flex-direction: column; gap: 12px; text-align: left; cursor: default; }
 .tr-guests-pop .stepper { font-size: 12.5px; }
 .tr-stepper-text { display: flex; flex-direction: column; gap: 1px; }
@@ -25,7 +26,10 @@
 .tr-guests-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text-dim); }
 
 /* ---------- Timeline chips ---------- */
-.tr-timeline { gap: 6px; margin-top: 4px; margin-bottom: 26px; }
+/* As wide as the map beneath; chips keep their natural width and wrap into
+   further rows from the left rather than shrinking. */
+.tr-timeline { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 8px 6px; margin: 4px 0 26px; }
+.tr-tl-item { display: inline-flex; align-items: center; gap: 6px; }
 .tr-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 100px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-family: inherit; font-size: 13px; letter-spacing: -0.01em; cursor: pointer; transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s; }
 .tr-chip b { font-weight: 600; color: #eeeeee; }
 .tr-chip:hover { background: rgba(255,255,255,0.04); border-color: var(--border2); transform: translateY(-1px); }
@@ -33,12 +37,21 @@
 .tr-chip.on b { color: var(--gold); }
 .tr-chip-dot { color: var(--text-dim); }
 .tr-chip-arrow { color: var(--text-dim); flex-shrink: 0; }
+.tr-chip-add { border-style: dashed; border-color: var(--border2); color: #eeeeee; text-decoration: none; }
+.tr-chip-add:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.28); }
+.tr-chip-add svg { color: var(--gold); }
 
 /* ---------- Route map ---------- */
-.tr-map { position: relative; width: 100%; aspect-ratio: 21 / 9; min-height: 300px; border-radius: var(--radius-card); border: 1px solid var(--border); overflow: hidden; background: #141414; }
+.tr-map { position: relative; width: 100%; aspect-ratio: 21 / 9; min-height: 300px; border-radius: var(--radius-card); border: 1px solid var(--border); overflow: hidden; background: #0a0a0a; }
 .tr-map > svg { display: block; width: 100%; height: 100%; }
 .tr-map text { user-select: none; }
 .tr-map-caption { margin-top: 12px; text-align: center; font-size: 12px; color: var(--text-muted); }
+
+/* The globe: black sea, grey land with a lighter coastline, faint graticule. */
+.tr-map-sea { fill: #0a0a0a; }
+.tr-map-graticule { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 1; }
+.tr-map-land { fill: #303030; stroke: #4c4c4c; stroke-width: 0.8; stroke-linejoin: round; animation: tr-fade 0.5s ease both; }
+.tr-map-sphere { fill: none; stroke: rgba(255,255,255,0.14); stroke-width: 1.5; }
 
 .tr-route-base { fill: none; stroke: rgba(255,255,255,0.22); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .tr-route-dash { fill: none; stroke: var(--gold); stroke-width: 2; stroke-dasharray: 5 9; stroke-linecap: round; stroke-linejoin: round; animation: tr-dash 2.4s linear infinite; }
@@ -54,7 +67,7 @@
 .tr-marker.on .tr-marker-pill { fill: var(--gold); stroke: var(--gold); }
 .tr-marker-label { font-size: 11px; font-weight: 600; fill: #ffffff; pointer-events: none; }
 .tr-marker.on .tr-marker-label { fill: #111111; }
-.tr-marker-city { font-size: 11px; font-weight: 500; fill: rgba(238,238,238,0.72); paint-order: stroke; stroke: #141414; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.tr-marker-city { font-size: 11px; font-weight: 500; fill: rgba(238,238,238,0.72); paint-order: stroke; stroke: #0a0a0a; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
 .tr-marker-ring { fill: #111111; stroke: rgba(255,255,255,0.35); stroke-width: 2; }
 .tr-marker-dot { fill: #eeeeee; transition: fill 0.2s; }
 .tr-marker.on .tr-marker-dot { fill: var(--gold); }
@@ -65,7 +78,6 @@
 .tr-total-label { font-size: 22px; font-weight: 500; letter-spacing: -0.025em; color: var(--text-muted); }
 .tr-total b { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; color: #eeeeee; }
 .tr-total-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.tr-add { text-decoration: none; flex-shrink: 0; }
 
 /* Overlapping dates */
 .tr-notice { margin-top: 22px; background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.28); }
@@ -147,7 +159,6 @@
 .tr-chip-btn:focus-visible,
 .tr-stop:focus-visible,
 .tr-stop-actions .ghost-btn:focus-visible,
-.tr-add:focus-visible,
 .tr-cta-actions .ghost-btn:focus-visible,
 .tr-cta-actions .primary-btn:focus-visible,
 .tr-empty-actions a:focus-visible,
@@ -160,6 +171,10 @@
   from { stroke-dashoffset: 0; }
   to   { stroke-dashoffset: -28; }
 }
+@keyframes tr-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 @keyframes tr-shimmer {
   from { background-position: 200% 0; }
   to   { background-position: -200% 0; }
@@ -170,7 +185,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tr-route-dash, .tr-skel, .tr-tray { animation: none; }
+  .tr-route-dash, .tr-skel, .tr-tray, .tr-map-land { animation: none; }
   .tr-chip, .tr-chip-btn, .tr-stop, .tr-stop-img, .tr-stop-label, .tr-marker, .tr-marker-card, .tr-marker-dot { transition: none; }
   .tr-chip:hover, .tr-stop:hover { transform: translateZ(0); }
   .tr-stop:hover .tr-stop-img { transform: none; }
@@ -180,6 +195,8 @@
   .tr-stops { margin-left: -24px; margin-right: -20px; padding-left: 24px; padding-right: 20px; }
 }
 @media (max-width: 720px) {
+  /* Taller canvas on phones (matches the map's H_TALL) so the route isn't cropped. */
+  .tr-map, .tr-skel-map { aspect-ratio: 25 / 16; min-height: 0; }
   .tr-total-row { flex-direction: column; align-items: flex-start; }
   .tr-cta { flex-direction: column; align-items: stretch; }
   .tr-cta-actions { justify-content: flex-end; }

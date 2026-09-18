@@ -1,24 +1,33 @@
 "use client";
 
-import { useId, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { geoGraticule10, geoOrthographic, geoPath, type GeoPermissibleObjects } from "d3-geo";
+import { feature } from "topojson-client";
+import type { GeometryObject, Topology } from "topojson-specification";
 import { flagEmoji, formatRange, type ResolvedStop } from "@/lib/trip";
 
 /* ------------------------------------------------------------------ */
-/*  A stylised route map. Stops are projected (equirectangular) into a  */
-/*  fixed 1000×420 canvas, joined by a bowed route, and each gets a     */
-/*  thumbnail card placed so it stays inside the canvas and clear of    */
-/*  its neighbours. Everything is deterministic — no randomness — so    */
-/*  the markup never differs between renders.                           */
+/*  The route on a globe. Stops are projected orthographically onto a   */
+/*  sphere turned to face the trip and zoomed until the stops fill the  */
+/*  canvas, over real coastlines (Natural Earth 1:50m) in grey on black.*/
+/*  Consecutive stops are joined by great-circle arcs, and each gets a  */
+/*  thumbnail card placed inside the canvas and clear of its neighbours.*/
+/*  Everything is deterministic, so the markup never differs between   */
+/*  renders.                                                            */
 /* ------------------------------------------------------------------ */
 
 const W = 1000;
-const H = 420;
+/* Wide canvas on desktop, a taller one on phones so nothing is cropped. */
+const H_WIDE = 420;
+const H_TALL = 640;
+const TALL_QUERY = "(max-width: 720px)";
 /* Nodes never come closer than this to the edge, so cards have room around them. */
 const MARGIN = 90;
-/* The stops' bounding box is widened by this fraction on every side. */
-const PAD = 0.28;
-const MIN_LNG_SPAN = 4.5;
-const MIN_LAT_SPAN = 3;
+/* A single stop, or stops very close together, still show this much of the world. */
+const MIN_SPAN_DEG = 9;
+const RAD = Math.PI / 180;
+/* Above this globe radius (px) a degree spans enough pixels for 1:50m coastlines to matter. */
+const FINE_SCALE = 1500;
 
 const NODE_R = 13;
 const CARD_W = 104;
@@ -54,27 +63,94 @@ interface Marker {
   side: HSide;
 }
 
+/* ---------- land, fetched once per resolution after first paint ---------- */
+
+type LandRes = "110m" | "50m";
+const landCache: Partial<Record<LandRes, GeoPermissibleObjects>> = {};
+const landPromise: Partial<Record<LandRes, Promise<GeoPermissibleObjects>>> = {};
+
+function loadLand(res: LandRes) {
+  let p = landPromise[res];
+  if (!p) {
+    const file = res === "50m" ? import("world-atlas/land-50m.json") : import("world-atlas/land-110m.json");
+    p = file.then((mod) => {
+      const topo = mod.default as unknown as Topology;
+      const land = feature(topo, topo.objects.land as GeometryObject) as GeoPermissibleObjects;
+      landCache[res] = land;
+      return land;
+    });
+    landPromise[res] = p;
+  }
+  return p;
+}
+
+/** The land at the wanted resolution, or the coarse one while the fine one is still loading. */
+function useLand(res: LandRes) {
+  const [, bump] = useState(0);
+  useEffect(() => {
+    if (landCache[res]) return;
+    let alive = true;
+    loadLand(res).then(() => {
+      if (alive) bump((n) => n + 1);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [res]);
+  return landCache[res] ?? landCache["110m"] ?? null;
+}
+
+function subscribeTall(cb: () => void) {
+  const mq = window.matchMedia(TALL_QUERY);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
+function useTallCanvas() {
+  return useSyncExternalStore(
+    subscribeTall,
+    () => window.matchMedia(TALL_QUERY).matches,
+    () => false
+  );
+}
+
 /* ---------- projection ---------- */
 
-function projectStops(stops: ResolvedStop[]): Pt[] {
-  let minLng = Infinity;
-  let maxLng = -Infinity;
-  let minLat = Infinity;
-  let maxLat = -Infinity;
+/** Mean of the stops as unit vectors, so trips across the antimeridian still centre correctly. */
+function sphereCentroid(stops: ResolvedStop[]): [number, number] {
+  let x = 0;
+  let y = 0;
+  let z = 0;
   for (const { property: p } of stops) {
-    minLng = Math.min(minLng, p.lng);
-    maxLng = Math.max(maxLng, p.lng);
-    minLat = Math.min(minLat, p.lat);
-    maxLat = Math.max(maxLat, p.lat);
+    const lat = p.lat * RAD;
+    const lng = p.lng * RAD;
+    x += Math.cos(lat) * Math.cos(lng);
+    y += Math.cos(lat) * Math.sin(lng);
+    z += Math.sin(lat);
   }
-  const midLng = (minLng + maxLng) / 2;
-  const midLat = (minLat + maxLat) / 2;
-  const lngSpan = Math.max(maxLng - minLng, MIN_LNG_SPAN);
-  const latSpan = Math.max(maxLat - minLat, MIN_LAT_SPAN);
-  const padded = 1 + 2 * PAD;
-  /* One uniform scale: the padded box fits the canvas and the raw box stays inside the margin. */
-  const s = Math.min(W / (lngSpan * padded), H / (latSpan * padded), (W - 2 * MARGIN) / lngSpan, (H - 2 * MARGIN) / latSpan);
-  return stops.map(({ property: p }) => ({ x: W / 2 + (p.lng - midLng) * s, y: H / 2 - (p.lat - midLat) * s }));
+  return [Math.atan2(y, x) / RAD, Math.atan2(z, Math.hypot(x, y)) / RAD];
+}
+
+function buildProjection(coords: [number, number][], stops: ResolvedStop[], h: number) {
+  const [cLng, cLat] = sphereCentroid(stops);
+  const proj = geoOrthographic()
+    .rotate([-cLng, -cLat])
+    .clipAngle(90)
+    .clipExtent([
+      [-40, -40],
+      [W + 40, h + 40],
+    ]);
+  proj.fitExtent(
+    [
+      [MARGIN, MARGIN],
+      [W - MARGIN, h - MARGIN],
+    ],
+    { type: "MultiPoint", coordinates: coords }
+  );
+  /* fitExtent zooms without limit on a single stop (or a tiny hop); cap it. */
+  const maxScale = (W - 2 * MARGIN) / (MIN_SPAN_DEG * RAD);
+  if (!Number.isFinite(proj.scale()) || proj.scale() > maxScale) proj.scale(maxScale).translate([W / 2, h / 2]);
+  return proj;
 }
 
 /* ---------- card placement ---------- */
@@ -89,8 +165,8 @@ function blockRect(node: Pt, h: HSide, v: VSide): Rect {
   return { x: node.x + H_OFFSET[h], y: node.y + V_OFFSET[v] - LABEL_H - LABEL_GAP, w: CARD_W, h: BLOCK_H };
 }
 
-function inBounds(r: Rect) {
-  return r.x >= EDGE && r.y >= EDGE && r.x + r.w <= W - EDGE && r.y + r.h <= H - EDGE;
+function inBounds(r: Rect, h: number) {
+  return r.x >= EDGE && r.y >= EDGE && r.x + r.w <= W - EDGE && r.y + r.h <= h - EDGE;
 }
 
 function overlapArea(a: Rect, b: Rect, gap: number) {
@@ -104,8 +180,8 @@ function coversNode(r: Rect, p: Pt) {
   return p.x > r.x - m && p.x < r.x + r.w + m && p.y > r.y - m && p.y < r.y + r.h + m;
 }
 
-function clampRect(r: Rect): Rect {
-  return { ...r, x: Math.min(Math.max(r.x, EDGE), W - EDGE - r.w), y: Math.min(Math.max(r.y, EDGE), H - EDGE - r.h) };
+function clampRect(r: Rect, h: number): Rect {
+  return { ...r, x: Math.min(Math.max(r.x, EDGE), W - EDGE - r.w), y: Math.min(Math.max(r.y, EDGE), h - EDGE - r.h) };
 }
 
 function candidates(h: HSide): [HSide, VSide][] {
@@ -125,51 +201,29 @@ function candidates(h: HSide): [HSide, VSide][] {
     leave the canvas are skipped and the rest are scored by how much they overlap
     cards already placed (or cover another node), so the fallback is the least
     crowded slot rather than a collision. */
-function placeCards(nodes: Pt[]): { rect: Rect; side: HSide }[] {
+function placeCards(nodes: Pt[], h: number): { rect: Rect; side: HSide }[] {
   const placed: { rect: Rect; side: HSide }[] = [];
   nodes.forEach((node, i) => {
     let preferred: HSide = node.x < W / 2 ? "right" : "left";
     if (i > 0 && dist(nodes[i - 1], node) < CLOSE_PX) preferred = flip(placed[i - 1].side);
 
     let best: { rect: Rect; side: HSide; score: number } | null = null;
-    for (const [h, v] of candidates(preferred)) {
-      const rect = blockRect(node, h, v);
-      if (!inBounds(rect)) continue;
+    for (const [hs, vs] of candidates(preferred)) {
+      const rect = blockRect(node, hs, vs);
+      if (!inBounds(rect, h)) continue;
       let score = placed.reduce((n, p) => n + overlapArea(rect, p.rect, CARD_GAP), 0);
       score += nodes.reduce((n, other, j) => n + (j !== i && coversNode(rect, other) ? 4000 : 0), 0);
-      if (!best || score < best.score) best = { rect, side: h, score };
+      if (!best || score < best.score) best = { rect, side: hs, score };
       if (score === 0) break;
     }
-    placed.push(best ? { rect: best.rect, side: best.side } : { rect: clampRect(blockRect(node, preferred, "above")), side: preferred });
+    placed.push(best ? { rect: best.rect, side: best.side } : { rect: clampRect(blockRect(node, preferred, "above"), h), side: preferred });
   });
   return placed;
 }
 
-/* ---------- route ---------- */
+/* ---------- component ---------- */
 
 const f = (n: number) => Math.round(n * 10) / 10;
-
-function routePath(nodes: Pt[]) {
-  let d = "";
-  for (let i = 1; i < nodes.length; i++) {
-    const a = nodes[i - 1];
-    const b = nodes[i];
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
-    const len = Math.hypot(dx, dy);
-    /* Bow perpendicular to the segment, alternating sides so the route weaves. */
-    const bow = len > 0 ? 0.14 * len * (i % 2 ? 1 : -1) : 0;
-    const px = len > 0 ? -dy / len : 0;
-    const py = len > 0 ? dx / len : 0;
-    const c1 = { x: a.x + dx / 3 + px * bow, y: a.y + dy / 3 + py * bow };
-    const c2 = { x: a.x + (2 * dx) / 3 + px * bow, y: a.y + (2 * dy) / 3 + py * bow };
-    if (i === 1) d += `M${f(a.x)} ${f(a.y)}`;
-    d += ` C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(b.x)} ${f(b.y)}`;
-  }
-  return d;
-}
-
-/* ---------- component ---------- */
 
 export default function TripMap({
   stops,
@@ -182,16 +236,43 @@ export default function TripMap({
 }) {
   /* useId can contain characters that are awkward inside url(#…); keep it plain. */
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  if (!stops.length) return null;
+  const h = useTallCanvas() ? H_TALL : H_WIDE;
 
-  const nodes = projectStops(stops);
-  const cards = placeCards(nodes);
+  const proj = useMemo(() => {
+    if (!stops.length) return null;
+    const coords = stops.map((s) => [s.property.lng, s.property.lat] as [number, number]);
+    return buildProjection(coords, stops, h);
+  }, [stops, h]);
+  const land = useLand(proj && proj.scale() > FINE_SCALE ? "50m" : "110m");
+
+  /* Projecting the coastlines is the expensive part; it only changes with the
+     stops, the canvas or the land data, not with the selected stop. */
+  const scene = useMemo(() => {
+    if (!proj) return null;
+    const coords = stops.map((s) => [s.property.lng, s.property.lat] as [number, number]);
+    const path = geoPath(proj);
+    const nodes = coords.map((c) => {
+      const p = proj(c) ?? [W / 2, h / 2];
+      return { x: p[0], y: p[1] };
+    });
+    return {
+      nodes,
+      cards: placeCards(nodes, h),
+      land: land ? path(land) : null,
+      graticule: path(geoGraticule10()),
+      sphere: path({ type: "Sphere" }),
+      route: stops.length > 1 ? path({ type: "LineString", coordinates: coords }) : null,
+    };
+  }, [proj, stops, h, land]);
+
+  if (!scene) return null;
+
   const markers: Marker[] = stops.map((stop, i) => ({
     stop,
     index: i,
-    node: nodes[i],
-    card: { x: cards[i].rect.x, y: cards[i].rect.y + LABEL_H + LABEL_GAP, w: CARD_W, h: CARD_H },
-    side: cards[i].side,
+    node: scene.nodes[i],
+    card: { x: scene.cards[i].rect.x, y: scene.cards[i].rect.y + LABEL_H + LABEL_GAP, w: CARD_W, h: CARD_H },
+    side: scene.cards[i].side,
   }));
   const active = markers.find((m) => m.stop.id === activeId) ?? markers[0];
   /* The active marker is drawn last so it sits above its neighbours. */
@@ -199,19 +280,14 @@ export default function TripMap({
 
   const cities = stops.map((s) => s.property.city);
   const title = stops.length > 1 ? `Route: ${cities.join(" → ")}` : `Location: ${cities[0]}`;
-  const gridId = `${uid}-grid`;
   const glowId = `${uid}-glow`;
   const clipId = (i: number) => `${uid}-clip-${i}`;
-  const path = routePath(nodes);
 
   return (
     <div className="tr-map">
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" width="100%" height="100%" role="group" aria-label={title}>
+      <svg viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="xMidYMid slice" width="100%" height="100%" role="group" aria-label={title}>
         <title>{title}</title>
         <defs>
-          <pattern id={gridId} width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M40 0H0v40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-          </pattern>
           <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#c9a96e" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#c9a96e" stopOpacity="0" />
@@ -223,25 +299,16 @@ export default function TripMap({
           ))}
         </defs>
 
-        {/* Backdrop: abstract land, water and a graticule — a placeholder in the product's palette. */}
-        <rect width={W} height={H} fill="#141414" />
-        <g fill="rgba(120,160,90,0.10)">
-          <path d="M-40 30C80 0 190 70 290 30S440 40 410 120 300 190 220 210 60 250-40 280Z" />
-          <path d="M600-30C700 30 830 0 920 60S1050 160 1030 250 900 300 850 350 690 380 650 300 560 200 590 110 620 40 600-30Z" />
-          <path d="M300 450C330 380 420 330 520 350S660 430 720 460Z" />
-        </g>
-        <g fill="rgba(90,140,200,0.10)">
-          <ellipse cx="480" cy="140" rx="150" ry="62" />
-          <ellipse cx="190" cy="340" rx="140" ry="52" />
-          <ellipse cx="880" cy="120" rx="80" ry="40" />
-        </g>
-        <rect width={W} height={H} fill={`url(#${gridId})`} />
+        <rect className="tr-map-sea" width={W} height={h} />
+        {scene.graticule && <path className="tr-map-graticule" d={scene.graticule} />}
+        {scene.land && <path className="tr-map-land" d={scene.land} />}
+        {scene.sphere && <path className="tr-map-sphere" d={scene.sphere} />}
         <circle cx={f(active.node.x)} cy={f(active.node.y)} r={70} fill={`url(#${glowId})`} />
 
-        {path && (
+        {scene.route && (
           <>
-            <path className="tr-route-base" d={path} />
-            <path className="tr-route-dash" d={path} />
+            <path className="tr-route-base" d={scene.route} />
+            <path className="tr-route-dash" d={scene.route} />
           </>
         )}
 

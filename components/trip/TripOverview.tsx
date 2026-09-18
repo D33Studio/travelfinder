@@ -39,6 +39,8 @@ export default function TripOverview() {
   const range = tripRange(resolved) ?? { start: active.checkIn, end: active.checkOut };
   const totals = tripTotals(resolved);
   const countries = tripCountriesLabel(resolved);
+  /* Countries in trip order for the header pill; a stretch of stops in one country reads once. */
+  const places = resolved.map((s) => s.property.country).filter((c, i, all) => i === 0 || c !== all[i - 1]);
   const summary = `${plural(resolved.length, "stay")} · ${plural(totals.nights, "night")}`;
 
   /* "Add another stay" searches the last stop's country for the nights right after it. */
@@ -68,10 +70,10 @@ export default function TripOverview() {
             <GlobeIcon />
           </span>
           <h1 className="flow-title">Trip Overview</h1>
-          <TripChip adults={trip.adults} kids={trip.children} dates={formatRange(range.start, range.end)} countries={countries} onChange={trip.setGuests} />
+          <TripChip adults={trip.adults} kids={trip.children} dates={formatRange(range.start, range.end)} places={places} onChange={trip.setGuests} />
         </header>
 
-        <TripTimeline stops={resolved} activeId={active.id} onSelect={setActiveId} />
+        <TripTimeline stops={resolved} activeId={active.id} addHref={addHref} onSelect={setActiveId} />
 
         <TripMap stops={resolved} activeId={active.id} onSelect={setActiveId} />
         <p className="tr-map-caption">
@@ -87,10 +89,6 @@ export default function TripOverview() {
             </div>
             <div className="tr-total-sub">{summary} · includes taxes &amp; service fees</div>
           </div>
-          <Link href={addHref} className="ghost-btn tr-add">
-            <Icon name="plus" size={13} />
-            Add another stay
-          </Link>
         </div>
 
         {overlaps.map(([a, b]) => (
@@ -213,20 +211,21 @@ function GlobeIcon() {
   );
 }
 
-/* One pill under the title — guests, dates, countries — that opens a small
-   popover with adult / child steppers writing straight to the trip store. The
-   pill row is its own scroller so the popover isn't clipped by it. */
+/* One pill under the title — guests, dates, then the countries as a chain
+   (Norway → Italy → Japan) — that opens a small popover with adult / child
+   steppers writing straight to the trip store. The pill row is its own
+   scroller so the popover isn't clipped by it. */
 function TripChip({
   adults,
   kids,
   dates,
-  countries,
+  places,
   onChange,
 }: {
   adults: number;
   kids: number;
   dates: string;
-  countries: string;
+  places: string[];
   onChange: (adults: number, kids: number) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -279,7 +278,16 @@ function TripChip({
         >
           <span className="tr-seg">{guestsLabel(adults, kids)}</span>
           <span className="tr-seg">{dates}</span>
-          {countries && <span className="tr-seg">{countries}</span>}
+          {places.length > 0 && (
+            <span className="tr-seg">
+              {places.map((place, i) => (
+                <Fragment key={i}>
+                  {i > 0 && <Icon name="arrowRight" size={11} className="tr-seg-arrow" />}
+                  {place}
+                </Fragment>
+              ))}
+            </span>
+          )}
         </button>
       </div>
 
@@ -353,7 +361,7 @@ function TripSkeleton() {
             <span className="tr-skel tr-skel-chip" aria-hidden="true" />
           </div>
         </header>
-        <div className="pill-row tr-timeline" aria-hidden="true">
+        <div className="tr-timeline" aria-hidden="true">
           <span className="tr-skel tr-skel-tchip" />
           <span className="tr-skel tr-skel-tchip" />
           <span className="tr-skel tr-skel-tchip" />
