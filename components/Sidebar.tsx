@@ -1,10 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTrip } from "@/components/TripContext";
 
-const navItems = [
+interface NavItem {
+  label: string;
+  href: string;
+  /** Path prefixes that light this item up. */
+  match: string[];
+  icon: React.ReactNode;
+}
+
+const navItems: NavItem[] = [
   {
     label: "Search",
+    href: "/",
+    match: ["/", "/property"],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="8" />
@@ -14,6 +26,8 @@ const navItems = [
   },
   {
     label: "Trips",
+    href: "/trip",
+    match: ["/trip", "/checkout", "/confirmation"],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
@@ -23,6 +37,8 @@ const navItems = [
   },
   {
     label: "Explore",
+    href: "/search",
+    match: ["/search"],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <polygon points="3,11 22,2 13,21 11,13 3,11" />
@@ -31,6 +47,8 @@ const navItems = [
   },
   {
     label: "Saved",
+    href: "#",
+    match: [],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -39,6 +57,8 @@ const navItems = [
   },
   {
     label: "Notifications",
+    href: "#",
+    match: [],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -48,6 +68,8 @@ const navItems = [
   },
   {
     label: "Messages",
+    href: "#",
+    match: [],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -56,29 +78,42 @@ const navItems = [
   },
 ];
 
+function isActive(item: NavItem, pathname: string) {
+  return item.match.some((m) => (m === "/" ? pathname === "/" : pathname === m || pathname.startsWith(m + "/")));
+}
+
 export default function Sidebar() {
-  const [active, setActive] = useState("Search");
+  const pathname = usePathname();
+  const trip = useTrip();
+  const stopCount = trip.ready ? trip.stops.length : 0;
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo">
+      <Link href="/" className="sidebar-logo">
         Journey<span>.</span>
-      </div>
+      </Link>
       <nav className="sidebar-nav">
-        {navItems.map((item) => (
-          <a
-            key={item.label}
-            href="#"
-            className={`nav-item${active === item.label ? " active" : ""}`}
-            onClick={(e) => {
-              e.preventDefault();
-              setActive(item.label);
-            }}
-          >
-            {item.icon}
-            {item.label}
-          </a>
-        ))}
+        {navItems.map((item) => {
+          const active = isActive(item, pathname);
+          const inert = item.href === "#";
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`nav-item${active ? " active" : ""}`}
+              aria-current={active ? "page" : undefined}
+              onClick={inert ? (e) => e.preventDefault() : undefined}
+            >
+              {item.icon}
+              {item.label}
+              {item.label === "Trips" && stopCount > 0 && (
+                <span className="nav-badge" aria-label={`${stopCount} stops in your trip`}>
+                  {stopCount}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
       <div className="sidebar-profile">
         <div className="profile-avatar">D</div>

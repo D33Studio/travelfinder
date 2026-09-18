@@ -1,0 +1,120 @@
+/* ================================================================== */
+/*  search screen styles — imported from app/layout.tsx                     */
+/*  sb-  search bar (hero + compact)   ·   sr-  search results               */
+/* ================================================================== */
+
+/* ---------- The bar itself (shared by both modes) ---------- */
+.sb-hero { padding-right: 40px; }
+.sb-bar { display: flex; align-items: stretch; width: 100%; max-width: 880px; padding: 6px; border-radius: 20px; background: #1a1a1a; border: 1px solid var(--border2); box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8); transition: border-color 0.2s; }
+.sb-bar:focus-within { border-color: rgba(255,255,255,0.22); }
+
+.sb-field { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 3px; min-width: 0; padding: 8px 16px; border-radius: 14px; transition: background 0.15s, box-shadow 0.15s; }
+.sb-field + .sb-field::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: var(--border2); }
+.sb-field:hover { background: rgba(255,255,255,0.03); }
+.sb-field:focus-within { background: rgba(255,255,255,0.03); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28); }
+.sb-where { flex: 1.7 1 0; }
+.sb-date { flex: 1 1 0; cursor: pointer; }
+.sb-guests { flex: 1.15 1 0; padding: 0; }
+
+.sb-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); cursor: inherit; }
+.sb-value { font-size: 13px; font-weight: 500; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Where: magnifier + borderless input, mirroring .search-input */
+.sb-where-row { display: flex; align-items: center; gap: 8px; height: 18px; }
+.sb-glass { width: 14px; height: 14px; stroke: var(--text-dim); fill: none; stroke-width: 2; stroke-linecap: round; flex-shrink: 0; }
+.sb-input { flex: 1; min-width: 0; height: 18px; padding: 0; background: transparent; border: none; outline: none; color: #eeeeee; font-family: inherit; font-size: 13px; font-weight: 500; }
+.sb-input::placeholder { color: rgba(238,238,238,0.26); font-weight: 400; }
+
+/* Dates: styled value with the native picker overlaid invisibly (same trick as the booking panel) */
+.sb-date input[type="date"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; color-scheme: dark; }
+
+/* Guests trigger — the button carries the field's padding so the whole field is clickable */
+.sb-guests-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 3px; width: 100%; padding: 8px 38px 8px 16px; background: none; border: none; outline: none; text-align: left; color: inherit; font-family: inherit; cursor: pointer; }
+.sb-guests-chev { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: transform 0.22s; }
+.sb-guests-btn[aria-expanded="true"] .sb-guests-chev { transform: translateY(-50%) rotate(180deg); }
+
+.sb-submit { align-self: center; margin-left: 6px; padding: 12px 18px; flex-shrink: 0; white-space: nowrap; }
+.sb-submit[aria-busy="true"] { opacity: 0.7; cursor: progress; }
+
+/* ---------- Type-ahead dropdown ---------- */
+.sb-suggest { position: absolute; top: calc(100% + 8px); left: 0; z-index: 40; min-width: 300px; max-width: 360px; margin: 0; padding: 6px; list-style: none; border-radius: 16px; background: #161616; border: 1px solid var(--border2); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.8); }
+.sb-suggest li { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; font-size: 13px; color: #eeeeee; transition: background 0.15s; }
+.sb-suggest li:hover, .sb-suggest li[aria-selected="true"] { background: rgba(255,255,255,0.07); }
+.sb-flag { width: 22px; font-size: 16px; line-height: 1; text-align: center; flex-shrink: 0; }
+.sb-suggest-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.sb-suggest-text small { font-size: 11px; color: var(--text-muted); }
+
+/* ---------- Guest popover ---------- */
+.sb-pop { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; width: 300px; max-width: 80vw; padding: 14px 16px 12px; border-radius: 18px; background: #161616; border: 1px solid var(--border2); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.8); outline: none; display: flex; flex-direction: column; gap: 12px; cursor: default; }
+.sb-pop .stepper { font-size: 12.5px; }
+.sb-stepper-text { display: flex; flex-direction: column; gap: 1px; }
+.sb-stepper-text strong { font-size: 13px; font-weight: 600; color: #eeeeee; }
+.sb-stepper-text small { font-size: 11px; color: var(--text-muted); }
+.sb-pop-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text-dim); }
+
+/* ---------- Compact mode: sticky header on /search ---------- */
+.sb-sticky { position: sticky; top: 0; z-index: 30; padding: 14px 40px 10px 65px; background: linear-gradient(#111111 85%, rgba(17,17,17,0)); }
+.sb-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.sb-home { padding: 8px 14px 8px 11px; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+
+.sb-compact { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: 100%; min-height: 34px; padding: 7px 16px 7px 14px; border-radius: 100px; background: #1a1a1a; border: 1px solid var(--border2); color: var(--text-muted); font-family: inherit; font-size: 12.5px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.sb-compact:hover { background: #1f1f1f; border-color: rgba(255,255,255,0.22); }
+.sb-compact[aria-expanded="true"] { border-color: var(--gold-line); }
+.sb-seg { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.sb-seg svg { color: var(--text-dim); }
+.sb-seg-dest { min-width: 0; overflow: hidden; }
+.sb-seg-dest b { display: block; min-width: 0; font-weight: 600; color: #eeeeee; overflow: hidden; text-overflow: ellipsis; }
+.sb-dot { color: var(--text-dim); }
+
+.sb-edit { flex-shrink: 0; }
+.sb-chev { transition: transform 0.22s; }
+.sb-edit[aria-expanded="true"] .sb-chev { transform: rotate(180deg); }
+.sb-trip { margin-left: auto; flex-shrink: 0; text-decoration: none; }
+
+/* Expanding panel: grid-row 0fr → 1fr plus opacity + a small slide, 0.22s */
+.sb-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(-6px); visibility: hidden; transition: grid-template-rows 0.22s ease, opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s; }
+.sb-panel.open { grid-template-rows: 1fr; opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
+.sb-panel-inner { min-height: 0; overflow: hidden; }
+.sb-panel.open .sb-panel-inner { overflow: visible; }
+.sb-panel .sb-bar { max-width: 960px; margin-top: 12px; }
+
+/* ---------- Results ---------- */
+.sr-head { padding: 10px 40px 0 65px; }
+.sr-title { font-size: 35px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: #eeeeee; margin-bottom: 12px; max-width: 900px; overflow-wrap: anywhere; }
+.sr-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12.5px; color: var(--text-muted); }
+.sr-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+.sr-meta-item b { font-weight: 500; color: rgba(238,238,238,0.85); }
+.sr-meta-sep { width: 1px; height: 12px; background: var(--border2); }
+.sr-hint { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12.5px; color: var(--text-dim); }
+.sr-hint svg { color: var(--gold); }
+
+.sr-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 640px; margin: 40px 40px 0 65px; padding: 24px 26px 22px; border-radius: var(--radius-panel); background: var(--surface); border: 1px solid var(--border); }
+.sr-empty.sr-empty-home { margin-top: 0; }
+.sr-empty-title { font-size: 17px; font-weight: 600; letter-spacing: -0.025em; color: #eeeeee; }
+.sr-empty-sub { font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
+.sr-empty-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.sr-empty-actions a { text-decoration: none; }
+.sr-home .section-heading:first-child { margin-top: 0; }
+
+/* ---------- Focus, motion, responsive ---------- */
+.sb-compact:focus-visible, .sb-edit:focus-visible, .sb-home:focus-visible, .sb-trip:focus-visible, .sb-submit:focus-visible, .sb-pop .stepper-ctrl button:focus-visible, .sb-pop .ghost-btn:focus-visible, .sr-empty-actions a:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-panel, .sb-chev, .sb-guests-chev, .sb-bar, .sb-field, .sb-compact, .sb-suggest li { transition: none; }
+}
+
+@media (max-width: 900px) {
+  .sb-bar { display: grid; grid-template-columns: 1fr 1fr; padding: 8px; }
+  .sb-field + .sb-field::before { display: none; }
+  .sb-where { grid-column: 1 / -1; }
+  .sb-date, .sb-guests { border-top: 1px solid var(--border2); border-radius: 0; }
+  .sb-date + .sb-date { border-left: 1px solid var(--border2); }
+  .sb-guests { grid-column: 1 / -1; }
+  .sb-pop { right: auto; left: 0; }
+  .sb-submit { grid-column: 1 / -1; margin: 6px 0 0; }
+  .sr-title { font-size: 28px; }
+}
+@media (max-width: 700px) {
+  /* The pill keeps only the destination; dates and party are repeated in the results header. */
+  .sb-seg:not(.sb-seg-dest), .sb-dot { display: none; }
+}
