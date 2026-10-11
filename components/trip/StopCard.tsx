@@ -46,7 +46,7 @@ export default function StopCard({
       <span className={`tr-stop-label${active ? " on" : ""}`}>Stop {n}</span>
 
       <Link href={href} className={`tr-stop${active ? " on" : ""}`}>
-        <Image src={property.image} alt="" fill sizes="(max-width: 720px) 100vw, 33vw" className="tr-stop-img" style={{ objectFit: "cover" }} />
+        <Image src={property.image} alt="" fill sizes="275px" className="tr-stop-img" style={{ objectFit: "cover" }} />
         <div className="card-overlay" />
         <span className="glass-badge tr-stop-badge tr-stop-badge-l">
           {property.location}

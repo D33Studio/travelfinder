@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Sidebar from "@/components/Sidebar";
 import ConfirmationScreen from "@/components/checkout/ConfirmationScreen";
 
 export const metadata: Metadata = { title: "Booking confirmed — Journey" };
@@ -16,13 +15,8 @@ export default async function ConfirmationPage({
   const ref = typeof raw === "string" && raw.trim() ? raw.trim().toUpperCase() : null;
 
   return (
-    <>
-      <Sidebar />
-      <div className="main">
-        <div className="flow">
-          <ConfirmationScreen refParam={ref} />
-        </div>
-      </div>
-    </>
+    <div className="flow">
+      <ConfirmationScreen refParam={ref} />
+    </div>
   );
 }

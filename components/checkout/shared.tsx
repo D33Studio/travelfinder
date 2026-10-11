@@ -12,7 +12,7 @@ const STEPS = ["Choose stays", "Review trip", "Checkout", "Confirmed"] as const;
 /** The 4-step progress row at the top of every flow page. */
 export function FlowSteps({ current }: { current: 1 | 2 | 3 | 4 }) {
   return (
-    <nav className="flow-steps" aria-label="Booking progress">
+    <nav className="pill-row flow-steps" aria-label="Booking progress">
       {STEPS.map((label, i) => {
         const n = i + 1;
         const done = n < current;

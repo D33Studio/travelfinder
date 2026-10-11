@@ -54,7 +54,25 @@ body {
 .nav-badge { margin-left: auto; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 100px; background: var(--gold); color: #111111; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 a.sidebar-logo { text-decoration: none; }
 .ni { width: 16px; height: 16px; stroke: #eeeeee; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.topbar, .sidebar-close, .sidebar-backdrop { display: none; }
 .sidebar-profile { padding: 14px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+
+/* Small screens: the sidebar is an off-canvas drawer opened from a top bar
+   that sits in the page flow (it scrolls away rather than sticking). */
+@media (max-width: 900px) {
+  .sidebar { width: 240px; min-width: 240px; z-index: 81; transform: translateX(-100%); visibility: hidden; box-shadow: 0 24px 60px -20px rgba(0,0,0,0.9); transition: transform 0.25s ease, visibility 0s linear 0.25s; }
+  .sidebar.open { transform: none; visibility: visible; transition-delay: 0s; }
+  .topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px 4px; }
+  .topbar-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .topbar-logo span { color: #ffffff; }
+  .sidebar-toggle { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); color: #eeeeee; cursor: pointer; flex-shrink: 0; }
+  .sidebar-close { display: inline-flex; align-items: center; justify-content: center; position: absolute; top: 20px; right: 14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); color: #eeeeee; cursor: pointer; }
+  .sidebar-toggle:hover, .sidebar-close:hover { background: rgba(255,255,255,0.1); }
+  .sidebar-toggle:focus-visible, .sidebar-close:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
+  .sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,0.55); opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0s linear 0.25s; }
+  .sidebar-backdrop.show { opacity: 1; visibility: visible; transition-delay: 0s; }
+}
+@media (prefers-reduced-motion: reduce) { .sidebar, .sidebar-backdrop { transition: none; } }
 .profile-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#c9a96e,#8b6914); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #111; flex-shrink: 0; }
 .profile-name { flex: 1; font-size: 12.5px; font-weight: 500; color: #eeeeee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .profile-dots { cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 4px; border-radius: 4px; transition: background 0.15s; }
@@ -66,6 +84,21 @@ a.sidebar-logo { text-decoration: none; }
 /* .main is the page's real scroll container (height: 100vh), which is what
    lets position: sticky work for the property page's tabs and booking panel. */
 .main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; max-width: calc(100% - var(--sidebar-w)); background: #111111; height: 100vh; overflow-y: auto; overflow-x: hidden; }
+@media (max-width: 900px) { .main { margin-left: 0; max-width: 100%; } }
+
+/* PILL ROW — step pills, trip chips and the like. Never wraps: when a row
+   outgrows the canvas it keeps its natural width and scrolls sideways; on
+   small screens it runs past the gutters to the screen edge. Auto margins on
+   the ends centre it while it fits and let it scroll from the left when not.
+   The small padding keeps hover lifts and focus rings inside the clip. */
+.pill-row { display: flex; align-items: center; gap: 8px; margin-left: -4px; margin-right: -4px; padding: 4px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; }
+.pill-row::-webkit-scrollbar { display: none; }
+.pill-row > * { flex-shrink: 0; white-space: nowrap; }
+.pill-row > :first-child { margin-left: auto; }
+.pill-row > :last-child { margin-right: auto; }
+@media (max-width: 900px) {
+  .pill-row { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; }
+}
 
 /* HERO */
 .hero { padding: 65px 0 36px 65px; }
@@ -113,15 +146,16 @@ a.sidebar-logo { text-decoration: none; }
 .card-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
 .card-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
 .card-meta { display: flex; gap: 5px; }
-.meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: rgba(238,238,238,0.92); display: flex; align-items: center; gap: 4px; }
 .card-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; align-content: flex-start; align-items: flex-start; }
-.pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; }
-.p-blue  { background: rgba(59,130,246,0.18);  color: #93c5fd; }
-.p-green { background: rgba(34,197,94,0.15);   color: #86efac; }
-.p-amber { background: rgba(245,158,11,0.15);  color: #fcd34d; }
-.p-teal  { background: rgba(20,184,166,0.16);  color: #5eead4; }
-.p-olive { background: rgba(101,163,13,0.15);  color: #bef264; }
-.p-dim   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+/* Feature tags: the tint stays on the background, the text is near-white for legibility. */
+.pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; color: rgba(245,245,245,0.94); }
+.p-blue  { background: rgba(59,130,246,0.22); }
+.p-green { background: rgba(34,197,94,0.2); }
+.p-amber { background: rgba(245,158,11,0.2); }
+.p-teal  { background: rgba(20,184,166,0.2); }
+.p-olive { background: rgba(101,163,13,0.2); }
+.p-dim   { background: rgba(255,255,255,0.08); }
 .reserve-wrap { margin-top: 12px; flex-shrink: 0; }
 .reserve-btn { display: block; width: 100%; padding: 9px; border-radius: 42px; background: rgba(255,255,255,0.06); border: none; color: #eeeeee; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; }
 .reserve-btn:hover, .card:hover .reserve-btn { background: #ffffff; color: #111111; }
@@ -376,7 +410,7 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .flow-subtitle { font-size: 17px; font-weight: 500; color: rgba(238,238,238,0.75); letter-spacing: -0.01em; }
 .flow-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 12px; color: rgba(238,238,238,0.85); }
 .flow-panel { padding: 22px; border-radius: var(--radius-panel); background: var(--surface); border: 1px solid var(--border); }
-.flow-steps { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 26px; font-size: 12px; color: var(--text-muted); }
+.flow-steps { margin-bottom: 26px; font-size: 12px; color: var(--text-muted); }
 .flow-step { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 8px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); }
 .flow-step b { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.08); color: #eeeeee; font-size: 10.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
 .flow-step.on { color: #eeeeee; border-color: var(--gold-line); }
@@ -384,7 +418,7 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .flow-step.done b { background: var(--success-soft); color: var(--success); }
 .flow-step-sep { color: var(--text-dim); }
 .ghost-btn.danger:hover { background: var(--danger-soft); border-color: var(--danger-line); color: var(--danger); }
-@media (max-width: 900px) { .flow { padding: 24px 20px 60px 24px; } }
+@media (max-width: 900px) { .flow { padding: 20px 20px 60px; } }
 
 /* Empty state */
 .empty-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 120px; }
@@ -392,6 +426,17 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .empty-cta { margin-top: 8px; }
 
 /* Responsive */
+/* Small screens: the page runs the full width with a 20px gutter — the wide
+   left gutter above only made sense next to the fixed sidebar. */
+@media (max-width: 900px) {
+  .hero { padding: 20px 20px 30px; }
+  .section-label, .section-subtitle { padding: 0 20px; }
+  .cards-grid { padding: 6px 20px; }
+  .prop { padding: 12px 20px 40px; }
+  .tabs { margin-left: -20px; margin-right: -20px; padding-left: 20px; padding-right: 20px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; white-space: nowrap; }
+}
 @media (max-width: 1180px) {
   .prop-layout { grid-template-columns: 1fr; }
   .prop-side { position: static; }
