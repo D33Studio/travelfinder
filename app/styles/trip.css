@@ -85,26 +85,27 @@
 .tr-notice .notice-tag .dot { background: #fcd34d; box-shadow: 0 0 8px rgba(252,211,77,0.8); }
 
 /* ---------- Stop cards ---------- */
-/* Same 275px cards as the home page rows, in a sideways scroller that runs
+/* Same 210px cards as the home page rows, in a sideways scroller that runs
    past the page gutters; the vertical padding keeps the hover lift unclipped. */
-.tr-stops { display: flex; gap: 28px; margin: 26px -40px 0 -65px; padding: 6px 40px 6px 65px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; }
+.tr-stops { display: flex; gap: 15px; margin: 26px -40px 0 -65px; padding: 6px 40px 6px 65px; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; }
 .tr-stops::-webkit-scrollbar { display: none; }
-.tr-stop-wrap { display: flex; flex-direction: column; gap: 10px; width: 275px; flex-shrink: 0; }
+.tr-stop-wrap { display: flex; flex-direction: column; gap: 10px; width: 210px; flex-shrink: 0; }
 .tr-stop-label { align-self: flex-start; padding: 5px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 12px; font-weight: 500; color: var(--text-muted); transition: background 0.2s, color 0.2s, border-color 0.2s; }
 .tr-stop-label.on { background: var(--gold); border-color: var(--gold); color: #111111; }
 
-.tr-stop { position: relative; display: block; aspect-ratio: 3 / 4; min-height: 380px; border-radius: var(--radius-card); border: 1px solid var(--border); background: var(--surface); overflow: hidden; text-decoration: none; color: inherit; transform: translateZ(0); transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s; }
+.tr-stop { position: relative; display: block; aspect-ratio: 210 / 328; border-radius: var(--radius-card); border: 1px solid var(--border); background: var(--surface); overflow: hidden; text-decoration: none; color: inherit; transform: translateZ(0); transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s; }
 .tr-stop:hover { transform: translateY(-4px) translateZ(0); border-color: var(--border2); }
 .tr-stop.on { border-color: var(--gold-line); box-shadow: 0 0 0 1px rgba(201,169,110,0.25); }
 .tr-stop-img { transition: transform 0.4s; }
 .tr-stop:hover .tr-stop-img { transform: scale(1.05); }
-.tr-stop-badge { position: absolute; top: 14px; z-index: 3; }
-.tr-stop-badge-l { left: 14px; }
-.tr-stop-badge-r { right: 14px; }
+.tr-stop-badge { position: absolute; top: 10px; z-index: 3; }
+.tr-stop-badge-l { left: 10px; }
+/* Too narrow for two badges side by side, so the dates sit under the location. */
+.tr-stop-badge-r { top: 40px; left: 10px; }
 .tr-stop-badge b { font-weight: 600; }
-.tr-stop-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 0 18px 18px; }
-.tr-stop-name { font-size: 17px; font-weight: 600; letter-spacing: -0.025em; color: #eeeeee; line-height: 1.2; }
-.tr-stop-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
+.tr-stop-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; flex-direction: column; gap: 5px; padding: 0 13px 13px; }
+.tr-stop-name { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: #eeeeee; line-height: 1.2; }
+.tr-stop-price { font-size: 17px; font-weight: 600; color: #eeeeee; }
 .tr-stop-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
 .tr-stop-meta { display: flex; flex-wrap: wrap; gap: 5px; }
 .tr-stop-meta .meta-chip { background: rgba(0,0,0,0.35); color: rgba(238,238,238,0.92); }
@@ -137,7 +138,7 @@
 .tr-skel-map { width: 100%; aspect-ratio: 21 / 9; min-height: 300px; border-radius: var(--radius-card); border: 1px solid var(--border); }
 .tr-skel-total { width: 260px; height: 34px; }
 .tr-skel-btn { width: 150px; height: 34px; }
-.tr-skel-card { width: 275px; flex-shrink: 0; aspect-ratio: 3 / 4; min-height: 380px; border-radius: var(--radius-card); border: 1px solid var(--border); }
+.tr-skel-card { width: 210px; flex-shrink: 0; aspect-ratio: 210 / 328; border-radius: var(--radius-card); border: 1px solid var(--border); }
 
 /* ---------- Empty trip ---------- */
 .tr-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 60px 0 40px; }

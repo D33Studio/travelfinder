@@ -127,12 +127,6 @@ export default async function PropertyPage({ params, searchParams }: { params: P
                     </div>
                   ))}
                 </div>
-
-                <div className="card-pills prop-tags">
-                  {detail.pills.map((pill) => (
-                    <span key={pill.label} className={`pill p-${pill.color}`}>{pill.label}</span>
-                  ))}
-                </div>
               </section>
 
               <section id="rooms" className="psec">

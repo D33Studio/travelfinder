@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import DateField from "@/components/DateField";
 import Icon from "@/components/Icon";
 import { useTrip } from "@/components/TripContext";
 import type { PropertyDetail } from "@/lib/propertyDetails";
@@ -13,7 +15,8 @@ import {
   SERVICE_RATE,
   TAX_RATE,
   addDays,
-  formatDate,
+  formatRange,
+  guestsLabel,
   money,
   plural,
   resolveStops,
@@ -29,6 +32,9 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
   const trip = useTrip();
   const router = useRouter();
   const nudgeTimer = useRef<number | undefined>(undefined);
+  const [tripOpen, setTripOpen] = useState(false);
+  const editBtn = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
 
   useEffect(() => () => window.clearTimeout(nudgeTimer.current), []);
 
@@ -61,7 +67,7 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
     const rooms = document.getElementById("rooms");
     if (!rooms) return;
     rooms.scrollIntoView({ behavior: "smooth", block: "start" });
-    rooms.querySelector<HTMLElement>(".rate-btn")?.focus({ preventScroll: true });
+    rooms.querySelector<HTMLElement>(".room-select")?.focus({ preventScroll: true });
     window.clearTimeout(nudgeTimer.current);
     rooms.classList.remove("bkx-nudge");
     void rooms.offsetWidth; // restart the pulse if it is still running
@@ -126,68 +132,120 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
         </div>
       ) : null}
 
-      <div className="bk-head">
-        <div>
-          <div className="bk-price">
-            {!b.selectedRate && <span className="bk-from">from</span>}
-            {money(nightly)} <span>/night</span>
-          </div>
-          <div className="bk-sub">Includes chef, host and housekeeping</div>
-        </div>
-        <div className="rating-pill">
-          <Icon name="star" size={10} filled />
-          {detail.rating.toFixed(1)}
-        </div>
-      </div>
-
-      <div className="bk-fields">
-        <label className="bk-field">
-          <span className="bk-label">Check in</span>
-          <span className="bk-value">{formatDate(b.checkIn)}</span>
-          <input type="date" value={b.checkIn} onChange={(e) => e.target.value && b.setCheckIn(e.target.value)} aria-label="Check-in date" />
-        </label>
-        <label className="bk-field">
-          <span className="bk-label">Check out</span>
-          <span className="bk-value">{formatDate(b.checkOut)}</span>
-          <input type="date" value={b.checkOut} min={b.checkIn} onChange={(e) => e.target.value && b.setCheckOut(e.target.value)} aria-label="Check-out date" />
-        </label>
-        <div className="bk-field bk-guests">
-          <span className="bk-label">Guests</span>
-          <span className="bk-value">
-            {plural(b.adults, "adult")}
-            {b.children > 0 && `, ${plural(b.children, "child", "children")}`}
+      <div className="bk-trip">
+        <button
+          type="button"
+          className="sb-compact bk-compact"
+          aria-expanded={tripOpen}
+          aria-controls={panelId}
+          title="Change dates or guests"
+          onClick={() => setTripOpen((o) => !o)}
+        >
+          <span className="sb-seg">
+            <Icon name="calendar" size={12} />
+            {formatRange(b.checkIn, b.checkOut)}
           </span>
-          <div className="stepper-row">
-            <Stepper label="Adults" value={b.adults} min={1} max={MAX_ADULTS} onChange={b.setAdults} />
-            <Stepper label="Children" value={b.children} min={0} max={MAX_CHILDREN} onChange={b.setChildren} />
+          <span className="sb-dot" aria-hidden="true">·</span>
+          <span className="sb-seg">
+            <Icon name="users" size={12} />
+            {guestsLabel(b.adults, b.children)}
+          </span>
+        </button>
+        <button
+          ref={editBtn}
+          type="button"
+          className="ghost-btn sb-edit"
+          aria-expanded={tripOpen}
+          aria-controls={panelId}
+          onClick={() => setTripOpen((o) => !o)}
+        >
+          Edit
+          <Icon name="chevronDown" size={13} className="sb-chev" />
+        </button>
+      </div>
+
+      <div
+        id={panelId}
+        className={`sb-panel${tripOpen ? " open" : ""}`}
+        inert={!tripOpen}
+        onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            setTripOpen(false);
+            editBtn.current?.focus();
+          }
+        }}
+      >
+        <div className="sb-panel-inner">
+          <div className="bk-edit">
+            <div className="bk-dates">
+              <DateField label="Check in" value={b.checkIn} onChange={b.setCheckIn} className="bk-field" labelClassName="bk-label" valueClassName="bk-value" />
+              <DateField label="Check out" value={b.checkOut} min={addDays(b.checkIn, 1)} onChange={b.setCheckOut} align="right" className="bk-field" labelClassName="bk-label" valueClassName="bk-value" />
+            </div>
+            <div className="stepper-row">
+              <Stepper label="Adults" value={b.adults} min={1} max={MAX_ADULTS} onChange={b.setAdults} />
+              <Stepper label="Children" value={b.children} min={0} max={MAX_CHILDREN} onChange={b.setChildren} />
+            </div>
           </div>
         </div>
       </div>
 
-      <button type="button" className="bk-room" onClick={goToRooms}>
-        <div className="bk-room-icon">
-          <Icon name="bed" size={15} />
+      {resolving ? (
+        <div className="bk-room" aria-hidden="true">
+          <div className="bk-room-text">
+            <span className="bkx-skel bkx-skel-md" />
+            <span className="bkx-skel bkx-skel-sm" />
+          </div>
         </div>
-        <div className="bk-room-text">
-          {resolving ? (
-            <>
-              <span className="bkx-skel bkx-skel-md" />
-              <span className="bkx-skel bkx-skel-sm" />
-            </>
-          ) : b.selectedRoom && b.selectedRate ? (
-            <>
-              <strong>{b.selectedRoom.name}</strong>
-              <span>{b.selectedRate.name} · {b.selectedRoom.bed}</span>
-            </>
-          ) : (
-            <>
-              <strong>Choose a room</strong>
-              <span>{detail.rooms.length} room types available</span>
-            </>
-          )}
-        </div>
-        <Icon name="chevronRight" size={14} className="bk-room-chev" />
-      </button>
+      ) : b.selectedRoom && b.selectedRate ? (
+        <>
+          <button type="button" className="bk-pick" onClick={goToRooms} aria-label={`${b.selectedRoom.name} — change room`}>
+            <Image src={b.selectedRoom.image} alt="" fill sizes="320px" style={{ objectFit: "cover" }} />
+            <span className="card-overlay" />
+            <span className="glass-badge bk-pick-change">Change</span>
+            <span className="bk-pick-name">{b.selectedRoom.name}</span>
+          </button>
+          <div className="bk-pick-meta">
+            <span>
+              {b.selectedRate.name} · {b.selectedRoom.bed}
+            </span>
+            <span className="bk-pick-price">
+              {money(nightly)} <span>/night</span>
+            </span>
+          </div>
+          <div className="bk-breakdown">
+            <div>
+              <span>{money(nightly)} × {plural(b.nights, "night")}</span>
+              <span>{money(subtotal)}</span>
+            </div>
+            <div>
+              <span>Taxes &amp; local levies</span>
+              <span>{money(taxes)}</span>
+            </div>
+            <div>
+              <span>Journey service fee</span>
+              <span>{money(service)}</span>
+            </div>
+            <div className="bk-total">
+              <span>Total · {plural(guests, "guest")}</span>
+              <span>{money(total)}</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <button type="button" className="bk-room" onClick={goToRooms}>
+          <div className="bk-room-icon">
+            <Icon name="bed" size={15} />
+          </div>
+          <div className="bk-room-text">
+            <strong>Choose a room</strong>
+            <span>
+              {detail.rooms.length} room types · from {money(detail.price)}/night
+            </span>
+          </div>
+          <Icon name="chevronRight" size={14} className="bk-room-chev" />
+        </button>
+      )}
 
       <div className="bkx-actions">
         {resolving ? (
@@ -235,25 +293,6 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
         )}
       </div>
       <div className="bk-note">{editing ? "Changes apply to your trip overview" : "You won't be charged until checkout"}</div>
-
-      <div className="bk-breakdown">
-        <div>
-          <span>{money(nightly)} × {plural(b.nights, "night")}</span>
-          <span>{money(subtotal)}</span>
-        </div>
-        <div>
-          <span>Taxes &amp; local levies</span>
-          <span>{money(taxes)}</span>
-        </div>
-        <div>
-          <span>Journey service fee</span>
-          <span>{money(service)}</span>
-        </div>
-        <div className="bk-total">
-          <span>Total · {plural(guests, "guest")}</span>
-          <span>{money(total)}</span>
-        </div>
-      </div>
 
       {others.length > 0 && (
         <div className="bkx-tripline">
