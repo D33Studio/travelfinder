@@ -5,11 +5,11 @@
 
 /* ---------- The bar itself (shared by both modes) ---------- */
 .sb-hero { padding-right: 40px; }
-.sb-bar { display: flex; align-items: stretch; width: 100%; max-width: 880px; padding: 6px; border-radius: 20px; background: #1a1a1a; border: 1px solid var(--border2); box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8); transition: border-color 0.2s; }
+.sb-bar { display: flex; align-items: stretch; gap: 8px; width: 100%; max-width: 880px; padding: 6px; border-radius: 20px; background: #1a1a1a; border: 1px solid var(--border2); box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8); transition: border-color 0.2s; }
 .sb-bar:focus-within { border-color: rgba(255,255,255,0.22); }
 
 .sb-field { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 3px; min-width: 0; padding: 8px 16px; border-radius: 14px; transition: background 0.15s, box-shadow 0.15s; }
-.sb-field + .sb-field::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: var(--border2); }
+.sb-field + .sb-field::before { content: ""; position: absolute; left: -4.5px; top: 10px; bottom: 10px; width: 1px; background: var(--border2); }
 .sb-field:hover { background: rgba(255,255,255,0.03); }
 .sb-field:focus-within { background: rgba(255,255,255,0.03); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28); }
 .sb-where { flex: 1.7 1 0; }
@@ -32,7 +32,7 @@
 .sb-guests-chev { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: transform 0.22s; }
 .sb-guests-btn[aria-expanded="true"] .sb-guests-chev { transform: translateY(-50%) rotate(180deg); }
 
-.sb-submit { align-self: center; margin-left: 6px; margin-right: 4px; padding: 12px 18px; flex-shrink: 0; white-space: nowrap; }
+.sb-submit { align-self: center; margin-right: 4px; padding: 12px 18px; flex-shrink: 0; white-space: nowrap; }
 .sb-submit[aria-busy="true"] { opacity: 0.7; cursor: progress; }
 
 /* ---------- Type-ahead dropdown ---------- */
@@ -107,7 +107,7 @@
   .sb-sticky { padding: 10px 20px; }
   .sr-head { padding: 10px 20px 0; }
   .sr-empty { margin: 40px 20px 0; }
-  .sb-bar { display: grid; grid-template-columns: 1fr 1fr; padding: 8px; }
+  .sb-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 8px; }
   .sb-field + .sb-field::before { display: none; }
   .sb-where { grid-column: 1 / -1; }
   .sb-date, .sb-guests { border-top: 1px solid var(--border2); border-radius: 0; }

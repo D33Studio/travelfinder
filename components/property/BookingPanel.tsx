@@ -234,14 +234,8 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
         </>
       ) : (
         <button type="button" className="bk-room" onClick={goToRooms}>
-          <div className="bk-room-icon">
-            <Icon name="bed" size={15} />
-          </div>
           <div className="bk-room-text">
             <strong>Choose a room</strong>
-            <span>
-              {detail.rooms.length} room types · from {money(detail.price)}/night
-            </span>
           </div>
           <Icon name="chevronRight" size={14} className="bk-room-chev" />
         </button>
@@ -303,11 +297,6 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
         </div>
       )}
 
-      <ul className="bk-perks">
-        <li><Icon name="shield" size={13} /> Best price guaranteed</li>
-        <li><Icon name="clock" size={13} /> {b.selectedRate?.perks.find((p) => p.label === "Free cancellation")?.included ? "Free cancellation on this rate" : "Flexible rates available"}</li>
-        <li><Icon name="sparkles" size={13} /> Members earn {Math.round(total / 10).toLocaleString("en-US")} points</li>
-      </ul>
     </div>
   );
 }

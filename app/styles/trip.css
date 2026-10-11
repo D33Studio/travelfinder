@@ -93,8 +93,8 @@
 .tr-stop-label { align-self: flex-start; padding: 5px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 12px; font-weight: 500; color: var(--text-muted); transition: background 0.2s, color 0.2s, border-color 0.2s; }
 .tr-stop-label.on { background: var(--gold); border-color: var(--gold); color: #111111; }
 
-.tr-stop { position: relative; display: block; aspect-ratio: 210 / 328; border-radius: var(--radius-card); border: 1px solid var(--border); background: var(--surface); overflow: hidden; text-decoration: none; color: inherit; transform: translateZ(0); transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s; }
-.tr-stop:hover { transform: translateY(-4px) translateZ(0); border-color: var(--border2); }
+.tr-stop { position: relative; display: block; aspect-ratio: 210 / 328; border-radius: var(--radius-card); border: 1px solid transparent; background: var(--surface); overflow: hidden; text-decoration: none; color: inherit; transform: translateZ(0); transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s; }
+.tr-stop:hover { transform: translateY(-4px) translateZ(0); }
 .tr-stop.on { border-color: var(--gold-line); box-shadow: 0 0 0 1px rgba(201,169,110,0.25); }
 .tr-stop-img { transition: transform 0.4s; }
 .tr-stop:hover .tr-stop-img { transform: scale(1.05); }

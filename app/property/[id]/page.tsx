@@ -115,18 +115,6 @@ export default async function PropertyPage({ params, searchParams }: { params: P
                 <div className="prose">
                   {detail.description.map((p) => <p key={p}>{p}</p>)}
                 </div>
-
-                <div className="hl-grid">
-                  {detail.highlights.map((h) => (
-                    <div key={h.title} className="hl">
-                      <span className="hl-icon"><Icon name={h.icon} size={16} /></span>
-                      <div>
-                        <div className="hl-title">{h.title}</div>
-                        <div className="hl-text">{h.text}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </section>
 
               <section id="rooms" className="psec">
