@@ -79,6 +79,8 @@
 
 /* ---------- Results ---------- */
 .sr-head { padding: 10px 40px 0 65px; }
+/* Standalone pages (Trips, Saved) have no sticky search bar above the title. */
+.sr-head.page-head { padding-top: 65px; }
 .sr-title { font-size: 35px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: #eeeeee; margin-bottom: 12px; max-width: 900px; overflow-wrap: anywhere; }
 .sr-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12.5px; color: var(--text-muted); }
 .sr-meta-item { display: inline-flex; align-items: center; gap: 6px; }
@@ -106,6 +108,7 @@
   .sb-hero { padding-right: 0; }
   .sb-sticky { padding: 10px 20px; }
   .sr-head { padding: 10px 20px 0; }
+  .sr-head.page-head { padding-top: 20px; }
   .sr-empty { margin: 40px 20px 0; }
   .sb-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 8px; }
   .sb-field + .sb-field::before { display: none; }

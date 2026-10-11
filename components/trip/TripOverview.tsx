@@ -63,6 +63,10 @@ export default function TripOverview() {
   return (
     <div className="flow">
       <div className="flow-inner">
+        <Link href="/trips" className="crumb-back flow-back">
+          <Icon name="arrowLeft" size={13} />
+          All trips
+        </Link>
         <FlowSteps current={1} />
 
         <header className="flow-head">
@@ -385,6 +389,10 @@ function TripEmpty({ lastSearch, stale, onClear }: { lastSearch: SearchParams | 
   return (
     <div className="flow">
       <div className="flow-inner narrow">
+        <Link href="/trips" className="crumb-back flow-back">
+          <Icon name="arrowLeft" size={13} />
+          All trips
+        </Link>
         <FlowSteps current={0} />
         <div className="tr-empty">
           <span className="empty-icon">

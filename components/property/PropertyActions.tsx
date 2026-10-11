@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Icon from "@/components/Icon";
+import { useTrip } from "@/components/TripContext";
 
-export default function PropertyActions() {
-  const [saved, setSaved] = useState(false);
+export default function PropertyActions({ propertyId }: { propertyId: string }) {
+  const trip = useTrip();
+  const saved = trip.isSaved(propertyId);
   const [copied, setCopied] = useState(false);
 
   const share = async () => {
@@ -27,7 +29,7 @@ export default function PropertyActions() {
         <Icon name="share" size={14} />
         {copied ? "Link copied" : "Share"}
       </button>
-      <button type="button" className={`ghost-btn${saved ? " on" : ""}`} onClick={() => setSaved((s) => !s)} aria-pressed={saved}>
+      <button type="button" className={`ghost-btn${saved ? " on" : ""}`} onClick={() => trip.toggleSaved(propertyId)} aria-pressed={saved}>
         <Icon name="bookmark" size={14} filled={saved} />
         {saved ? "Saved" : "Save"}
       </button>

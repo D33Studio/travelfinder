@@ -37,6 +37,10 @@ function Confirmed({ booking }: { booking: Booking }) {
 
   return (
     <div className="flow-inner co-page">
+      <Link href="/trips" className="crumb-back flow-back">
+        <Icon name="arrowLeft" size={13} />
+        All trips
+      </Link>
       <FlowSteps current={4} />
 
       <header className="flow-head">
@@ -142,8 +146,8 @@ function Confirmed({ booking }: { booking: Booking }) {
               Plan another trip
               <Icon name="arrowRight" size={14} />
             </Link>
-            <Link href="/search" className="ghost-btn">
-              Search more stays
+            <Link href="/trips" className="ghost-btn">
+              All trips
             </Link>
           </div>
         </aside>
@@ -224,8 +228,8 @@ function NotFound({ refParam }: { refParam: string | null }) {
             <Icon name="arrowLeft" size={14} />
             Back to search
           </Link>
-          <Link href="/trip" className="ghost-btn">
-            View current trip
+          <Link href="/trips" className="ghost-btn">
+            View your trips
           </Link>
         </div>
       </div>

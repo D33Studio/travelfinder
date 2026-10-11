@@ -26,17 +26,6 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Trips",
-    href: "/trip",
-    match: ["/trip", "/checkout", "/confirmation"],
-    icon: (
-      <svg className="ni" viewBox="0 0 24 24">
-        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
-        <circle cx="12" cy="10" r="3" />
-      </svg>
-    ),
-  },
-  {
     label: "Explore",
     href: "/search",
     match: ["/search"],
@@ -48,8 +37,8 @@ const navItems: NavItem[] = [
   },
   {
     label: "Saved",
-    href: "#",
-    match: [],
+    href: "/saved",
+    match: ["/saved"],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -57,13 +46,13 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Notifications",
-    href: "#",
-    match: [],
+    label: "Trips",
+    href: "/trips",
+    match: ["/trips", "/trip", "/checkout", "/confirmation"],
     icon: (
       <svg className="ni" viewBox="0 0 24 24">
-        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.73 21a2 2 0 01-3.46 0" />
+        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
+        <circle cx="12" cy="10" r="3" />
       </svg>
     ),
   },

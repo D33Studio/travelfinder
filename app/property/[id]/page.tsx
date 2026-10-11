@@ -100,7 +100,7 @@ export default async function PropertyPage({ params, searchParams }: { params: P
               <span className="prop-meta-fact"><Icon name="ruler" size={12} /> {detail.sizeSqm} m²</span>
             </div>
           </div>
-          <PropertyActions />
+          <PropertyActions propertyId={detail.id} />
         </header>
 
         <Gallery images={detail.gallery} name={detail.name} />

@@ -27,6 +27,7 @@ import type { SearchParams } from "@/lib/search";
 
 const TRIP_KEY = "journey.trip.v1";
 const BOOKINGS_KEY = "journey.bookings.v1";
+const SAVED_KEY = "journey.saved.v1";
 
 interface PersistedTrip {
   stops: TripStop[];
@@ -45,6 +46,8 @@ export interface TripState {
   /** The most recent search the traveller ran, so property pages can fall back to its dates and party. */
   lastSearch: SearchParams | null;
   bookings: Booking[];
+  /** Property ids the traveller has bookmarked, most recent first. */
+  saved: string[];
 
   addStop: (input: Omit<TripStop, "id">) => TripStop;
   updateStop: (id: string, patch: Partial<Omit<TripStop, "id">>) => void;
@@ -56,10 +59,13 @@ export interface TripState {
   /** Mock "payment": snapshots the trip as a Booking, stores it, empties the trip, and returns it. */
   confirmBooking: (input: { guest: GuestDetails; payment: PaymentSummary }) => Booking;
   getBooking: (ref: string) => Booking | undefined;
+  isSaved: (propertyId: string) => boolean;
+  toggleSaved: (propertyId: string) => void;
 }
 
 const EMPTY: PersistedTrip = { stops: [], adults: 2, children: 0, lastSearch: null };
 const NO_BOOKINGS: Booking[] = [];
+const NO_SAVED: string[] = [];
 
 /* ---------- persistence helpers ---------- */
 
@@ -108,10 +114,15 @@ function sanitizeBookings(v: unknown): Booking[] {
   return Array.isArray(v) ? (v.filter((b) => b && typeof b === "object" && typeof (b as Booking).ref === "string") as Booking[]) : NO_BOOKINGS;
 }
 
+function sanitizeSaved(v: unknown): string[] {
+  return Array.isArray(v) ? [...new Set(v.filter((x): x is string => typeof x === "string"))] : NO_SAVED;
+}
+
 /* ---------- the store (module-level, client only) ---------- */
 
 let tripState: PersistedTrip = EMPTY;
 let bookingsState: Booking[] = NO_BOOKINGS;
+let savedState: string[] = NO_SAVED;
 let loaded = false;
 const listeners = new Set<() => void>();
 
@@ -120,6 +131,7 @@ function loadOnce() {
   loaded = true;
   tripState = sanitizeTrip(readJson<unknown>(TRIP_KEY, EMPTY));
   bookingsState = sanitizeBookings(readJson<unknown>(BOOKINGS_KEY, NO_BOOKINGS));
+  savedState = sanitizeSaved(readJson<unknown>(SAVED_KEY, NO_SAVED));
 }
 
 function emit() {
@@ -140,6 +152,13 @@ function setBookings(updater: (b: Booking[]) => Booking[]) {
   emit();
 }
 
+function setSaved(updater: (s: string[]) => string[]) {
+  loadOnce();
+  savedState = updater(savedState);
+  writeJson(SAVED_KEY, savedState);
+  emit();
+}
+
 function subscribe(listener: () => void) {
   listeners.add(listener);
   /* Keep tabs in sync: a stop added in one tab shows up in the other. */
@@ -150,6 +169,10 @@ function subscribe(listener: () => void) {
     }
     if (e.key === BOOKINGS_KEY) {
       bookingsState = sanitizeBookings(readJson<unknown>(BOOKINGS_KEY, NO_BOOKINGS));
+      emit();
+    }
+    if (e.key === SAVED_KEY) {
+      savedState = sanitizeSaved(readJson<unknown>(SAVED_KEY, NO_SAVED));
       emit();
     }
   };
@@ -168,7 +191,12 @@ const getBookingsSnapshot = () => {
   loadOnce();
   return bookingsState;
 };
+const getSavedSnapshot = () => {
+  loadOnce();
+  return savedState;
+};
 const getServerTrip = () => EMPTY;
+const getServerSaved = () => NO_SAVED;
 const getServerBookings = () => NO_BOOKINGS;
 const subscribeNoop = () => () => {};
 const clientTrue = () => true;
@@ -224,6 +252,10 @@ function confirmBooking({ guest, payment }: { guest: GuestDetails; payment: Paym
   return booking;
 }
 
+function toggleSaved(propertyId: string) {
+  setSaved((s) => (s.includes(propertyId) ? s.filter((id) => id !== propertyId) : [propertyId, ...s]));
+}
+
 /* ---------- React binding ---------- */
 
 const TripContext = createContext<TripState | null>(null);
@@ -232,6 +264,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
   const ready = useSyncExternalStore(subscribeNoop, clientTrue, serverFalse);
   const trip = useSyncExternalStore(subscribe, getTripSnapshot, getServerTrip);
   const bookings = useSyncExternalStore(subscribe, getBookingsSnapshot, getServerBookings);
+  const saved = useSyncExternalStore(subscribe, getSavedSnapshot, getServerSaved);
 
   const value = useMemo<TripState>(
     () => ({
@@ -241,6 +274,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
       children: trip.children,
       lastSearch: trip.lastSearch,
       bookings,
+      saved,
       addStop,
       updateStop,
       removeStop,
@@ -250,8 +284,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
       clearTrip,
       confirmBooking,
       getBooking: (ref) => bookings.find((b) => b.ref === ref),
+      isSaved: (id) => saved.includes(id),
+      toggleSaved,
     }),
-    [ready, trip, bookings]
+    [ready, trip, bookings, saved]
   );
 
   return <TripContext.Provider value={value}>{children}</TripContext.Provider>;

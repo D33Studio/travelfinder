@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTrip } from "@/components/TripContext";
 import type { Property } from "@/lib/properties";
 
 /* Shown if a property's remote photo can't be fetched, so a card never renders broken. */
@@ -19,7 +20,8 @@ export default function PropertyCard({
   /** Label on the card's bottom button. */
   cta?: string;
 }) {
-  const [saved, setSaved] = useState(false);
+  const trip = useTrip();
+  const saved = trip.isSaved(property.id);
   const [src, setSrc] = useState(property.image);
 
   return (
@@ -45,16 +47,16 @@ export default function PropertyCard({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setSaved(!saved);
+            trip.toggleSaved(property.id);
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               e.stopPropagation();
-              setSaved(!saved);
+              trip.toggleSaved(property.id);
             }
           }}
-          aria-label="Save property"
+          aria-label={saved ? `Remove ${property.name} from saved` : `Save ${property.name}`}
           aria-pressed={saved}
         >
           <svg viewBox="0 0 24 24" width={17} height={17} fill={saved ? "#ffffff" : "none"} stroke="#ffffff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
