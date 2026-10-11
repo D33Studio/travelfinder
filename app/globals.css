@@ -150,13 +150,6 @@ a.sidebar-logo { text-decoration: none; }
 .card-meta { display: flex; gap: 5px; }
 .meta-chip { padding: 3px 8px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); font-size: 10px; color: rgba(238,238,238,0.92); display: flex; align-items: center; gap: 4px; }
 /* Feature tags: the tint stays on the background, the text is near-white for legibility. */
-.pill { padding: 3px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; color: rgba(245,245,245,0.94); }
-.p-blue  { background: rgba(59,130,246,0.22); }
-.p-green { background: rgba(34,197,94,0.2); }
-.p-amber { background: rgba(245,158,11,0.2); }
-.p-teal  { background: rgba(20,184,166,0.2); }
-.p-olive { background: rgba(101,163,13,0.2); }
-.p-dim   { background: rgba(255,255,255,0.08); }
 .reserve-wrap { margin-top: 12px; flex-shrink: 0; }
 .reserve-btn { display: block; width: 100%; padding: 9px; border-radius: 42px; background: rgba(255,255,255,0.06); border: none; color: #eeeeee; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; }
 .reserve-btn:hover, .card:hover .reserve-btn { background: #ffffff; color: #111111; }
@@ -253,43 +246,42 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .hl-icon { width: 38px; height: 38px; border-radius: 12px; background: rgba(201,169,110,0.12); color: var(--gold); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .hl-title { font-size: 13.5px; font-weight: 600; color: #eeeeee; margin-bottom: 3px; }
 .hl-text { font-size: 12.5px; line-height: 1.55; color: var(--text-muted); }
-.prop-tags { margin-top: 22px; }
 
-/* Rooms */
-.rooms { display: flex; flex-direction: column; gap: 16px; }
-.room { display: grid; grid-template-columns: 300px minmax(0, 1fr); border-radius: 26px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+/* Rooms: vertical cards — photo, facts, rate options, price and Select. */
+.rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+.room { display: flex; flex-direction: column; border-radius: var(--radius-panel); background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
 .room.selected { border-color: rgba(201,169,110,0.55); box-shadow: 0 0 0 1px rgba(201,169,110,0.25); }
-.room-media { position: relative; min-height: 300px; background: #171717; }
+.room-media { position: relative; aspect-ratio: 4 / 3; background: #171717; overflow: hidden; }
 .room-media img { transition: transform 0.5s; }
 .room:hover .room-media img { transform: scale(1.04); }
-.room-media-shade { position: absolute; inset: 0; background: linear-gradient(to right, transparent 60%, rgba(13,13,13,0.9)); pointer-events: none; }
 .room-left { position: absolute; top: 12px; left: 12px; background: rgba(120,30,30,0.55); border-color: rgba(255,120,120,0.35); }
 .room-size { position: absolute; bottom: 12px; left: 12px; }
-.room-body { padding: 20px 22px 18px; display: flex; flex-direction: column; gap: 12px; }
-.room-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.room-name { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: #eeeeee; margin-bottom: 3px; }
+.room-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.room-name { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; color: #eeeeee; margin-bottom: 2px; }
 .room-view { font-size: 12px; color: var(--text-muted); }
-.room-from { font-size: 16px; font-weight: 600; color: #eeeeee; white-space: nowrap; }
-.room-from span { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-right: 2px; }
-.room-facts { display: flex; gap: 6px; }
-.room-pills { margin-top: 0; }
-.rates { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-.rate { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--border); background: rgba(255,255,255,0.025); transition: border-color 0.15s, background 0.15s; }
-.rate:hover { background: rgba(255,255,255,0.045); }
+.room-facts { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.rates { display: flex; flex-direction: column; gap: 6px; }
+.rate { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.025); color: inherit; font-family: inherit; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.rate:hover { background: rgba(255,255,255,0.05); }
 .rate.on { border-color: rgba(201,169,110,0.55); background: rgba(201,169,110,0.06); }
-.rate-name { font-size: 13px; font-weight: 600; color: #eeeeee; margin-bottom: 5px; }
-.rate-perks { display: flex; flex-wrap: wrap; gap: 4px 12px; }
-.rate-perks span { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; }
-.rate-perks .yes { color: #86efac; }
-.rate-perks .no { color: var(--text-dim); }
-.rate-note { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
-.rate-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.rate-price { font-size: 16px; font-weight: 600; color: #eeeeee; }
-.rate-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
-.rate-total { font-size: 11px; color: var(--text-dim); }
-.rate-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 7px 16px; border-radius: 42px; background: rgba(255,255,255,0.08); border: 1px solid var(--border2); color: #eeeeee; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-.rate-btn:hover { background: #ffffff; color: #111111; border-color: #ffffff; }
-.rate-btn.on { background: var(--gold); color: #111111; border-color: var(--gold); }
+.rate-top { display: flex; align-items: center; gap: 8px; }
+.rate-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; transition: border-color 0.15s, box-shadow 0.15s; }
+.rate.on .rate-dot { border-color: var(--gold); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 8px var(--gold); }
+.rate-name { flex: 1; font-size: 12.5px; font-weight: 600; color: #eeeeee; }
+.rate-price { font-size: 12.5px; font-weight: 500; color: rgba(238,238,238,0.85); }
+.rate-perks { display: flex; flex-wrap: wrap; gap: 3px 10px; padding-left: 22px; }
+.rate-perks span { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #86efac; }
+.rate-perks .rate-none { color: var(--text-muted); }
+
+.room-foot { margin-top: auto; padding-top: 4px; }
+.room-price { font-size: 20px; font-weight: 600; color: #eeeeee; }
+.room-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+.room-total { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+.room-select { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 12px; padding: 10px; border-radius: 42px; background: rgba(255,255,255,0.08); border: 1px solid var(--border2); color: #eeeeee; font-family: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+.room-select:hover { background: #ffffff; color: #111111; border-color: #ffffff; }
+.room-select.on { background: var(--gold); color: #111111; border-color: var(--gold); }
+.rate:focus-visible, .room-select:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
 
 /* Amenities */
 .amen-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 20px; }
@@ -353,34 +345,43 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 
 /* Booking panel */
 .bk { padding: 20px; border-radius: 26px; background: var(--surface); border: 1px solid var(--border2); box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8); }
-.bk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.bk-price { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: #eeeeee; display: flex; align-items: baseline; gap: 5px; }
-.bk-price span { font-size: 12px; font-weight: 400; color: var(--text-muted); }
-.bk-from { font-size: 12px; font-weight: 400; color: var(--text-muted); }
-.bk-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
-.bk-fields { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; background: #141414; }
-.bk-field { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; cursor: pointer; }
-.bk-field:first-child { border-right: 1px solid var(--border2); }
-.bk-field:hover { background: rgba(255,255,255,0.03); }
+/* Dates · guests pill with Edit, expanding into the date fields and steppers. */
+.bk-trip { display: flex; align-items: center; gap: 8px; }
+.bk-compact { flex: 1; justify-content: center; }
+.bk-edit { padding-top: 12px; }
+.bk-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bk-field { border-radius: 14px; border: 1px solid var(--border2); background: #141414; transition: background 0.15s, border-color 0.15s; }
+.bk-field:hover { background: #1a1a1a; }
+.bk-field:focus-within { border-color: rgba(255,255,255,0.28); }
+.bk-field .df-trigger { gap: 2px; padding: 10px 12px; }
 .bk-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
 .bk-value { font-size: 13px; font-weight: 500; color: #eeeeee; }
-.bk-field input[type="date"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; color-scheme: dark; }
-.bk-guests { grid-column: 1 / -1; border-top: 1px solid var(--border2); cursor: default; }
-.bk-guests:hover { background: transparent; }
-.stepper-row { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.stepper-row { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 2px 2px 4px; }
 .stepper { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: rgba(238,238,238,0.8); }
 .stepper-ctrl { display: flex; align-items: center; gap: 10px; }
 .stepper-ctrl b { min-width: 14px; text-align: center; font-weight: 600; color: #eeeeee; }
 .stepper-ctrl button { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2); background: rgba(255,255,255,0.06); color: #eeeeee; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
 .stepper-ctrl button:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
 .stepper-ctrl button:disabled { opacity: 0.3; cursor: not-allowed; }
-.bk-room { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 10px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: inherit; font-family: inherit; text-align: left; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.bk-room { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: inherit; font-family: inherit; text-align: left; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
 .bk-room:hover { background: rgba(255,255,255,0.07); border-color: var(--border2); }
 .bk-room-icon { width: 34px; height: 34px; border-radius: 11px; background: rgba(201,169,110,0.12); color: var(--gold); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .bk-room-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
 .bk-room-text strong { font-size: 13px; font-weight: 600; color: #eeeeee; }
 .bk-room-text span { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bk-room-chev { color: var(--text-muted); }
+
+/* The chosen room as a mini destination card, then its price and details. */
+.bk-pick { position: relative; display: block; width: 100%; height: 150px; margin-top: 14px; padding: 0; border-radius: 20px; border: 1px solid var(--border2); background: #171717; overflow: hidden; cursor: pointer; font-family: inherit; text-align: left; }
+.bk-pick img { transition: transform 0.4s; }
+.bk-pick:hover img { transform: scale(1.04); }
+.bk-pick .card-overlay { z-index: 1; }
+.bk-pick-name { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 2; font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: #eeeeee; }
+.bk-pick-change { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.bk-pick:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
+.bk-pick-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+.bk-pick-price { font-size: 17px; font-weight: 600; color: #eeeeee; white-space: nowrap; }
+.bk-pick-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
 .bk-cta { width: 100%; margin-top: 14px; padding: 13px; font-size: 13.5px; }
 .bk-note { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 9px; }
 .bk-confirm { display: flex; gap: 12px; margin-top: 14px; padding: 12px 14px; border-radius: 16px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); }
@@ -388,12 +389,32 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
 .bk-confirm div:last-child { display: flex; flex-direction: column; gap: 2px; }
 .bk-confirm strong { font-size: 13px; color: #eeeeee; }
 .bk-confirm span { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; }
-.bk-breakdown { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted); }
+.bk-breakdown { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted); }
 .bk-breakdown > div { display: flex; justify-content: space-between; gap: 12px; }
 .bk-total { margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--border); font-weight: 600; color: #eeeeee; font-size: 13.5px; }
 .bk-perks { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 16px; }
 .bk-perks li { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-muted); }
 .bk-perks svg { color: var(--gold); }
+
+/* Date field + calendar popover */
+.df { position: relative; }
+.df-trigger { display: flex; flex-direction: column; justify-content: center; gap: 3px; width: 100%; height: 100%; padding: 0; background: none; border: none; outline: none; color: inherit; font-family: inherit; text-align: left; cursor: pointer; }
+.df-pop { position: absolute; top: calc(100% + 8px); z-index: 45; width: 280px; padding: 14px; border-radius: 20px; background: #161616; border: 1px solid var(--border2); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.8); cursor: default; }
+.df-left { left: 0; }
+.df-right { right: 0; }
+.df-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.df-month { font-size: 13px; font-weight: 600; color: #eeeeee; }
+.df-nav { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border2); background: rgba(255,255,255,0.05); color: #eeeeee; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
+.df-nav:hover:not(:disabled) { background: rgba(255,255,255,0.12); }
+.df-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+.df-week, .df-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.df-week span { padding: 4px 0; text-align: center; font-size: 10.5px; color: var(--text-muted); }
+.df-day { position: relative; aspect-ratio: 1; border: none; border-radius: 50%; background: transparent; color: #eeeeee; font-family: inherit; font-size: 12.5px; cursor: pointer; transition: background 0.12s; }
+.df-day:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+.df-day.today::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: var(--gold); }
+.df-day.on { background: #ffffff; color: #111111; font-weight: 600; }
+.df-day:disabled { color: var(--text-dim); cursor: not-allowed; }
+.df-day:focus-visible, .df-nav:focus-visible { outline: 2px solid rgba(255,255,255,0.6); outline-offset: 1px; }
 
 /* Similar row */
 .prop-similar { padding-top: 10px; }
@@ -447,14 +468,9 @@ p.prose { font-size: 13.5px; line-height: 1.7; color: rgba(238,238,238,0.72); }
   .gal { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 140px; }
   .gal-hero { grid-column: 1 / -1; grid-row: 1; }
   .gal-tile:nth-child(n+4) { display: none; }
-  .room { grid-template-columns: 1fr; }
-  .room-media { min-height: 200px; }
-  .room-media-shade { background: linear-gradient(to top, rgba(13,13,13,0.9), transparent 60%); }
   .loc, .hl-grid, .pol-grid, .pol-cols, .rev-list { grid-template-columns: 1fr; }
   .amen-grid { grid-template-columns: 1fr 1fr; }
   .rev-summary { grid-template-columns: 1fr; }
   .pol-times { grid-template-columns: 1fr; }
   .prop-head { flex-direction: column; }
-  .rate { flex-direction: column; align-items: stretch; }
-  .rate-side { align-items: flex-start; }
 }

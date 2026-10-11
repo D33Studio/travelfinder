@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useRef, useState, useTransition, type FormEvent, type KeyboardEvent } from "react";
+import DateField from "@/components/DateField";
 import Icon from "@/components/Icon";
 import { useTrip } from "@/components/TripContext";
 import { searchHref, suggestPlaces, type SearchParams } from "@/lib/search";
-import { addDays, flagEmoji, formatDate, formatRange, guestsLabel } from "@/lib/trip";
+import { addDays, flagEmoji, formatRange, guestsLabel } from "@/lib/trip";
 import GuestPicker from "./GuestPicker";
-import { openPicker } from "@/lib/openPicker";
 
 /* One search bar, two modes:
    - "hero"    — the full bar under the home-page headline (live-filters the rows via onQueryChange)
@@ -157,17 +157,8 @@ export default function SearchBar({
         )}
       </div>
 
-      <label className="sb-field sb-date">
-        <span className="sb-label">Check in</span>
-        <span className="sb-value">{formatDate(from)}</span>
-        <input type="date" onClick={openPicker} value={from} onChange={(e) => changeFrom(e.target.value)} aria-label="Check-in date" />
-      </label>
-
-      <label className="sb-field sb-date">
-        <span className="sb-label">Check out</span>
-        <span className="sb-value">{formatDate(to)}</span>
-        <input type="date" onClick={openPicker} value={to} min={addDays(from, 1)} onChange={(e) => changeTo(e.target.value)} aria-label="Check-out date" />
-      </label>
+      <DateField label="Check in" value={from} onChange={changeFrom} className="sb-field sb-date" labelClassName="sb-label" valueClassName="sb-value" />
+      <DateField label="Check out" value={to} min={addDays(from, 1)} onChange={changeTo} className="sb-field sb-date" labelClassName="sb-label" valueClassName="sb-value" />
 
       <GuestPicker adults={adults} kids={kids} onAdults={setAdults} onKids={setKids} />
 

@@ -13,7 +13,8 @@
 .sb-field:hover { background: rgba(255,255,255,0.03); }
 .sb-field:focus-within { background: rgba(255,255,255,0.03); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28); }
 .sb-where { flex: 1.7 1 0; }
-.sb-date { flex: 1 1 0; cursor: pointer; }
+.sb-date { flex: 1 1 0; padding: 0; }
+.sb-date .df-trigger { padding: 8px 16px; }
 .sb-guests { flex: 1.15 1 0; padding: 0; }
 
 .sb-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); cursor: inherit; }
@@ -25,15 +26,13 @@
 .sb-input { flex: 1; min-width: 0; height: 18px; padding: 0; background: transparent; border: none; outline: none; color: #eeeeee; font-family: inherit; font-size: 13px; font-weight: 500; }
 .sb-input::placeholder { color: rgba(238,238,238,0.26); font-weight: 400; }
 
-/* Dates: styled value with the native picker overlaid invisibly (same trick as the booking panel) */
-.sb-date input[type="date"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; color-scheme: dark; }
 
 /* Guests trigger — the button carries the field's padding so the whole field is clickable */
 .sb-guests-btn { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 3px; width: 100%; padding: 8px 38px 8px 16px; background: none; border: none; outline: none; text-align: left; color: inherit; font-family: inherit; cursor: pointer; }
 .sb-guests-chev { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: transform 0.22s; }
 .sb-guests-btn[aria-expanded="true"] .sb-guests-chev { transform: translateY(-50%) rotate(180deg); }
 
-.sb-submit { align-self: center; margin-left: 6px; padding: 12px 18px; flex-shrink: 0; white-space: nowrap; }
+.sb-submit { align-self: center; margin-left: 6px; margin-right: 4px; padding: 12px 18px; flex-shrink: 0; white-space: nowrap; }
 .sb-submit[aria-busy="true"] { opacity: 0.7; cursor: progress; }
 
 /* ---------- Type-ahead dropdown ---------- */
@@ -120,5 +119,5 @@
 }
 @media (max-width: 700px) {
   /* The pill keeps only the destination; dates and party are repeated in the results header. */
-  .sb-seg:not(.sb-seg-dest), .sb-dot { display: none; }
+  .sb-sticky .sb-seg:not(.sb-seg-dest), .sb-sticky .sb-dot { display: none; }
 }
