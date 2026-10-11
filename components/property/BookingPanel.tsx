@@ -20,6 +20,7 @@ import {
   tripTotals,
 } from "@/lib/trip";
 import { useBooking } from "./BookingContext";
+import { openPicker } from "@/lib/openPicker";
 
 /* How long the rooms section keeps its outline pulse after "Choose a room". */
 const NUDGE_MS = 1000;
@@ -144,12 +145,12 @@ export default function BookingPanel({ detail }: { detail: PropertyDetail }) {
         <label className="bk-field">
           <span className="bk-label">Check in</span>
           <span className="bk-value">{formatDate(b.checkIn)}</span>
-          <input type="date" value={b.checkIn} onChange={(e) => e.target.value && b.setCheckIn(e.target.value)} aria-label="Check-in date" />
+          <input type="date" onClick={openPicker} value={b.checkIn} onChange={(e) => e.target.value && b.setCheckIn(e.target.value)} aria-label="Check-in date" />
         </label>
         <label className="bk-field">
           <span className="bk-label">Check out</span>
           <span className="bk-value">{formatDate(b.checkOut)}</span>
-          <input type="date" value={b.checkOut} min={b.checkIn} onChange={(e) => e.target.value && b.setCheckOut(e.target.value)} aria-label="Check-out date" />
+          <input type="date" onClick={openPicker} value={b.checkOut} min={b.checkIn} onChange={(e) => e.target.value && b.setCheckOut(e.target.value)} aria-label="Check-out date" />
         </label>
         <div className="bk-field bk-guests">
           <span className="bk-label">Guests</span>
